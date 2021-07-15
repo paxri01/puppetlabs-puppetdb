@@ -90,6 +90,7 @@ class puppetdb (
   String[1] $cleanup_timer_interval        = $puppetdb::params::cleanup_timer_interval,
   Integer[1] $dlo_max_age                  = $puppetdb::params::dlo_max_age,
   Optional[Stdlib::Absolutepath] $java_bin = $puppetdb::params::java_bin,
+  Boolean  $manage_dnf_module              = $puppetdb::params::manage_dnf_module
 ) inherits puppetdb::params {
 
   class { '::puppetdb::server':
@@ -192,6 +193,7 @@ class puppetdb (
       database_port               => $database_port,
       manage_server               => $manage_dbserver,
       manage_database             => $manage_database,
+      manage_dnf_module           => $manage_dnf_module,
       manage_package_repo         => $manage_package_repo,
       postgres_version            => $postgres_version,
       postgresql_ssl_on           => $postgresql_ssl_on,
