@@ -961,6 +961,11 @@ be installed from the regular repository. Defaults to `true`.
 If the postgresql.org repo is installed, you can install several versions of
 postgres. Defaults to `9.6` in module version 6.0+ and `9.4` in older versions.
 
+#### `manage_dnf_module`
+
+If `true`, enable specified postgresql version appstream for EL 8 systems. Also
+override $server_package_name within postgresql module.  Defaults to false.
+
 Implementation
 ---------------
 

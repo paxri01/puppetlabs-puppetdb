@@ -8,6 +8,7 @@ class puppetdb::database::postgresql (
   $database_password           = $puppetdb::params::database_password,
   $database_port               = $puppetdb::params::database_port,
   $manage_database             = $puppetdb::params::manage_database,
+  $manage_dnf_module           = $puppetdb::params::manage_dnf_module,
   $manage_server               = $puppetdb::params::manage_dbserver,
   $manage_package_repo         = $puppetdb::params::manage_pg_repo,
   $postgres_version            = $puppetdb::params::postgres_version,
@@ -22,6 +23,7 @@ class puppetdb::database::postgresql (
 
   if $manage_server {
     class { '::postgresql::globals':
+      manage_dnf_module   => $manage_dnf_module,
       manage_package_repo => $manage_package_repo,
       version             => $postgres_version,
     }
