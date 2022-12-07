@@ -20,12 +20,17 @@ class puppetdb::params inherits puppetdb::globals {
   $manage_database           = true
   $manage_dnf_module         = false
 
-  if $::osfamily =~ /RedHat|Debian/ {
+  if fact('os.family') =~ /RedHat|Debian/ {
     $manage_pg_repo            = true
   } else {
     $manage_pg_repo            = false
   }
-  $postgres_version          = '9.6'
+
+  if $puppetdb_version in ['latest','present'] or versioncmp($puppetdb_version, '7.0.0') >= 0 {
+    $postgres_version          = '11'
+  } else {
+    $postgres_version          = '9.6'
+  }
 
   # The remaining database settings are not used for an embedded database
   $database_host          = 'localhost'
@@ -37,7 +42,7 @@ class puppetdb::params inherits puppetdb::globals {
   $jdbc_ssl_properties    = ''
   $database_validate      = true
   $database_max_pool_size = undef
-  $puppetdb_server        = $::fqdn
+  $puppetdb_server        = fact('networking.fqdn')
 
   # These settings manage the various auto-deactivation and auto-purge settings
   $node_ttl               = '7d'
@@ -82,7 +87,7 @@ class puppetdb::params inherits puppetdb::globals {
   $masterless           = false
 
   if !($puppetdb_version in ['latest','present','absent']) and versioncmp($puppetdb_version, '3.0.0') < 0 {
-    case $::osfamily {
+    case fact('os.family') {
       'RedHat', 'Suse', 'Archlinux','Debian': {
         $etcdir                 = '/etc/puppetdb'
         $vardir                 = '/var/lib/puppetdb'
@@ -105,13 +110,13 @@ class puppetdb::params inherits puppetdb::globals {
         $puppet_service_name    = 'puppetmaster'
       }
       default: {
-        fail("The fact 'osfamily' is set to ${::osfamily} which is not supported by the puppetdb module.")
+        fail("The fact 'os.family' is set to ${fact('os.family')} which is not supported by the puppetdb module.")
       }
     }
     $terminus_package = 'puppetdb-terminus'
     $test_url         = '/v3/version'
   } else {
-    case $::osfamily {
+    case fact('os.family') {
       'RedHat', 'Suse', 'Archlinux','Debian': {
         $etcdir              = '/etc/puppetlabs/puppetdb'
         $puppet_confdir      = pick($settings::confdir,'/etc/puppetlabs/puppet')
@@ -128,7 +133,7 @@ class puppetdb::params inherits puppetdb::globals {
         $puppet_service_name = undef
       }
       default: {
-        fail("The fact 'osfamily' is set to ${::osfamily} which is not supported by the puppetdb module.")
+        fail("The fact 'os.family' is set to ${fact('os.family')} which is not supported by the puppetdb module.")
       }
     }
     $terminus_package       = 'puppetdb-termini'
@@ -140,7 +145,7 @@ class puppetdb::params inherits puppetdb::globals {
   $confdir = "${etcdir}/conf.d"
   $ssl_dir = "${etcdir}/ssl"
 
-  case $::osfamily {
+  case fact('os.family') {
     'RedHat', 'Suse', 'Archlinux': {
       $puppetdb_user     = 'puppetdb'
       $puppetdb_group    = 'puppetdb'
@@ -162,7 +167,7 @@ class puppetdb::params inherits puppetdb::globals {
       $puppetdb_initconf = undef
     }
     default: {
-      fail("The fact 'osfamily' is set to ${::osfamily} which is not supported by the puppetdb module.")
+      fail("The fact 'os.family' is set to ${fact('os.family')} which is not supported by the puppetdb module.")
     }
   }
 
