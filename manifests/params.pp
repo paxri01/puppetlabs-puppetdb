@@ -21,8 +21,13 @@ class puppetdb::params inherits puppetdb::globals {
 
   if fact('os.family') =~ /RedHat|Debian/ {
     $manage_pg_repo            = true
+    if fact('os.family') == 'RedHat' fact('os.release.major') == '8' {
+      $manage_dnf_module       = true
+    }
+    $manage_dnf_module       = false
   } else {
     $manage_pg_repo            = false
+    $manage_dnf_module       = false
   }
 
   if $puppetdb_version in ['latest','present'] or versioncmp($puppetdb_version, '7.0.0') >= 0 {
