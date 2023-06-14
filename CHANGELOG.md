@@ -2,6 +2,9 @@
 
 Release notes for the puppetlabs-puppetdb module.
 
+#### 7.12.1 - 2023/05/20
+* Enable manage_dnf_module parameter for postgresql
+
 #### 7.12.0 - 2022/12/13
 * Grant read role to write user to fix database user permissions issue
   [PDB-5559](https://tickets.puppetlabs.com/browse/PDB-5559)
