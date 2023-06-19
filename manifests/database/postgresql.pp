@@ -1,36 +1,34 @@
-# Class for creating the PuppetDB postgresql database. See README.md for more
-# information.
-class puppetdb::database::postgresql (
-  $listen_addresses            = $puppetdb::params::database_host,
-  $puppetdb_server             = $puppetdb::params::puppetdb_server,
-  $database_name               = $puppetdb::params::database_name,
-  $database_username           = $puppetdb::params::database_username,
-  $database_password           = $puppetdb::params::database_password,
-  $database_port               = $puppetdb::params::database_port,
-  $manage_database             = $puppetdb::params::manage_database,
-  $manage_dnf_module           = $puppetdb::params::manage_dnf_module,
-  $manage_server               = $puppetdb::params::manage_dbserver,
-  $manage_package_repo         = $puppetdb::params::manage_pg_repo,
-  $manage_dnf_module           = $puppetdb::params::manage_dnf_module,
-  $postgres_version            = $puppetdb::params::postgres_version,
-  $postgresql_ssl_on           = $puppetdb::params::postgresql_ssl_on,
-  $postgresql_ssl_key_path     = $puppetdb::params::postgresql_ssl_key_path,
-  $postgresql_ssl_cert_path    = $puppetdb::params::postgresql_ssl_cert_path,
-  $postgresql_ssl_ca_cert_path = $puppetdb::params::postgresql_ssl_ca_cert_path,
-  $read_database_username      = $puppetdb::params::read_database_username,
-  $read_database_password      = $puppetdb::params::read_database_password,
-  $read_database_host          = $puppetdb::params::read_database_host
-) inherits puppetdb::params {
+# @summary Class for creating the PuppetDB postgresql database. See README.md
+#   for more information.
+#
+class puppetdb::database::postgresql {
+  $database_name               = $puppetdb::database_name
+  $database_password           = $puppetdb::database_password
+  $database_port               = $puppetdb::database_port
+  $database_username           = $puppetdb::database_username
+  $listen_addresses            = $puppetdb::database_listen_address
+  $manage_database             = $puppetdb::manage_database
+  $manage_dnf_module           = $puppetdb::manage_dnf_module
+  $manage_package_repo         = $puppetdb::manage_package_repo
+  $manage_server               = $puppetdb::manage_dbserver
+  $postgres_version            = $puppetdb::postgres_version
+  $postgresql_ssl_ca_cert_path = $puppetdb::postgresql_ssl_ca_cert_path
+  $postgresql_ssl_cert_path    = $puppetdb::postgresql_ssl_cert_path
+  $postgresql_ssl_key_path     = $puppetdb::postgresql_ssl_key_path
+  $postgresql_ssl_on           = $puppetdb::postgresql_ssl_on
+  $puppetdb_server             = $puppetdb::puppetdb_server
+  $read_database_host          = $puppetdb::read_database_host
+  $read_database_password      = $puppetdb::read_database_password
+  $read_database_username      = $puppetdb::read_database_username
 
   if $manage_server {
-    class { '::postgresql::globals':
+    class { 'postgresql::globals':
       manage_dnf_module   => $manage_dnf_module,
       manage_package_repo => $manage_package_repo,
-      manage_dnf_module   => $manage_dnf_module,
       version             => $postgres_version,
     }
     # get the pg server up and running
-    class { '::postgresql::server':
+    class { 'postgresql::server':
       ip_mask_allow_all_users => '0.0.0.0/0',
       listen_addresses        => $listen_addresses,
       port                    => scanf($database_port, '%i')[0],
@@ -39,7 +37,7 @@ class puppetdb::database::postgresql (
     # We need to create the ssl connection for the read user, when
     # manage_database is set to true, or when read_database_host is defined.
     # Otherwise we don't create it.
-    if $manage_database or $read_database_host != undef{
+    if $manage_database or $read_database_host != undef {
       $create_read_user_rule = true
     } else {
       $create_read_user_rule = false
@@ -49,22 +47,21 @@ class puppetdb::database::postgresql (
     # postgresql_ssl_on is set to true
     if $postgresql_ssl_on {
       class { 'puppetdb::database::ssl_configuration':
+        create_read_user_rule       => $create_read_user_rule,
         database_name               => $database_name,
         database_username           => $database_username,
-        read_database_username      => $read_database_username,
-        puppetdb_server             => $puppetdb_server,
-        postgresql_ssl_key_path     => $postgresql_ssl_key_path,
-        postgresql_ssl_cert_path    => $postgresql_ssl_cert_path,
         postgresql_ssl_ca_cert_path => $postgresql_ssl_ca_cert_path,
-        create_read_user_rule       => $create_read_user_rule
+        postgresql_ssl_cert_path    => $postgresql_ssl_cert_path,
+        postgresql_ssl_key_path     => $postgresql_ssl_key_path,
+        puppetdb_server             => $puppetdb_server,
+        read_database_username      => $read_database_username,
       }
     }
 
     # Only install pg_trgm extension, if database it is actually managed by the module
     if $manage_database {
-
       # get the pg contrib to use pg_trgm extension
-      class { '::postgresql::server::contrib': }
+      class { 'postgresql::server::contrib': }
 
       postgresql::server::extension { 'pg_trgm':
         database => $database_name,
@@ -101,7 +98,7 @@ class puppetdb::database::postgresql (
       read_database_username => $read_database_username,
       database_name          => $database_name,
       password_hash          => postgresql::postgresql_password($read_database_username, $read_database_password),
-      database_owner         => $database_username
+      database_owner         => $database_username,
     }
 
     -> postgresql_psql { "grant ${read_database_username} role to ${database_username}":

@@ -1,11 +1,13 @@
-# PRIVATE CLASS - do not use directly
-class puppetdb::server::command_processing (
-  $command_threads   = $puppetdb::params::command_threads,
-  $concurrent_writes = $puppetdb::params::concurrent_writes,
-  $store_usage       = $puppetdb::params::store_usage,
-  $temp_usage        = $puppetdb::params::temp_usage,
-  $confdir           = $puppetdb::params::confdir,
-) inherits puppetdb::params {
+# @summay PRIVATE CLASS - do not use directly
+#
+# @api private
+#
+class puppetdb::server::command_processing {
+  $command_threads   = $puppetdb::command_threads
+  $concurrent_writes = $puppetdb::concurrent_writes
+  $confdir           = $puppetdb::confdir
+  $store_usage       = $puppetdb::store_usage
+  $temp_usage        = $puppetdb::temp_usage
 
   $config_ini = "${confdir}/config.ini"
 

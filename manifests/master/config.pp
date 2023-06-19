@@ -1,35 +1,35 @@
-# Manage puppet configuration. See README.md for more details.
-class puppetdb::master::config (
-  $puppetdb_server             = fact('networking.fqdn'),
-  $puppetdb_port               = defined(Class['puppetdb']) ? {
-    true    => $::puppetdb::disable_ssl ? {
+# @summary Manage puppet configuration. See README.md for more details.
+#
+class puppetdb::master::config {
+  $puppetdb_server                = fact('networking.fqdn')
+  $puppetdb_port                  = defined(Class['puppetdb']) ? {
+    true    => $puppetdb::disable_ssl ? {
       true => 8080,
       default => 8081,
     },
     default => 8081,
-  },
-  $puppetdb_disable_ssl        = defined(Class['puppetdb']) ? {
-    true    => $::puppetdb::disable_ssl,
+  }
+  $puppetdb_disable_ssl           = defined(Class['puppetdb']) ? {
+    true    => $puppetdb::disable_ssl,
     default => false,
-  },
-  $masterless                  = $puppetdb::params::masterless,
-  $puppetdb_soft_write_failure = false,
-  $manage_routes               = true,
-  $manage_storeconfigs         = true,
-  $enable_storeconfigs         = true,
-  $manage_report_processor     = false,
-  $manage_config               = true,
-  $create_puppet_service_resource = true,
-  $strict_validation           = true,
-  $enable_reports              = false,
-  $puppet_confdir              = $puppetdb::params::puppet_confdir,
-  $puppet_conf                 = $puppetdb::params::puppet_conf,
-  $terminus_package            = $puppetdb::params::terminus_package,
-  $puppet_service_name         = $puppetdb::params::puppet_service_name,
-  $puppetdb_startup_timeout    = $puppetdb::params::puppetdb_startup_timeout,
-  $test_url                    = $puppetdb::params::test_url,
-  $restart_puppet              = true,
-) inherits puppetdb::params {
+  }
+  $masterless                     = $puppetdb::masterless
+  $puppetdb_soft_write_failure    = $puppetdb::puppetdb_soft_write_failure
+  $manage_routes                  = $puppetdb::manage_routes
+  $manage_storeconfigs            = $puppetdb::manage_storeconfigs
+  $enable_storeconfigs            = $puppetdb::enable_storeconfigs
+  $manage_report_processor        = $puppetdb::manage_report_processor
+  $manage_config                  = $puppetdb::manage_config
+  $create_puppet_service_resource = $puppetdb::create_puppet_service_resource
+  $strict_validation              = $puppetdb::strict_validation
+  $enable_reports                 = $puppetdb::enable_repots
+  $puppet_confdir                 = $puppetdb::puppet_confdir
+  $puppet_conf                    = $puppetdb::puppet_conf
+  $terminus_package               = $puppetdb::terminus_package
+  $puppet_service_name            = $puppetdb::puppet_service_name
+  $puppetdb_startup_timeout       = $puppetdb::puppetdb_startup_timeout
+  $test_url                       = $puppetdb::test_url
+  $restart_puppet                 = $puppetdb::restart_puppet
 
   # **WARNING**: Ugly hack to work around a yum bug with metadata parsing. This
   # should not be copied, replicated or even looked at. In short, never rename
@@ -50,9 +50,9 @@ class puppetdb::master::config (
   # and some of the new terminus files temporarily. If this exec fails all you
   # need to do is reinstall whatever 2.3 version of the terminus was already
   # installed to revert the change.
-  if !($puppetdb::params::puppetdb_version in ['present','absent'])
-  and versioncmp($puppetdb::params::puppetdb_version, '3.0.0') >= 0
-  and $::osfamily in ['RedHat','Suse'] {
+  if !($puppetdb::puppetdb_version in ['present','absent'])
+  and versioncmp($puppetdb::puppetdb_version, '3.0.0') >= 0
+  and $facts['os']['family'] in ['RedHat','Suse'] {
     exec { 'Remove puppetdb-terminus metadata for upgrade':
       command => 'rpm -e --justdb puppetdb-terminus',
       path    => '/sbin/:/bin/',
@@ -62,11 +62,10 @@ class puppetdb::master::config (
   }
 
   package { $terminus_package:
-    ensure => $puppetdb::params::puppetdb_version,
+    ensure => $puppetdb::puppetdb_version,
   }
 
   if ($strict_validation) {
-
     # Validate the puppetdb connection.  If we can't connect to puppetdb then we
     # *must* not perform the other configuration steps, or else
 
@@ -96,7 +95,7 @@ class puppetdb::master::config (
     # conditional dependency.  Basically, we're saying that "if the PuppetDB
     # service is being managed in this same catalog, it needs to come before
     # this validator."
-    Service<|title == $puppetdb::params::puppetdb_service|> -> Puppetdb_conn_validator['puppetdb_conn']
+    Service<|title == $puppetdb::puppetdb_service|> -> Puppetdb_conn_validator['puppetdb_conn']
   }
 
   # Conditionally manage the `routes.yaml` file.  Restart the puppet service
@@ -161,7 +160,7 @@ class puppetdb::master::config (
       port               => $puppetdb_port,
       soft_write_failure => $puppetdb_soft_write_failure,
       puppet_confdir     => $puppet_confdir,
-      legacy_terminus    => $puppetdb::params::terminus_package == 'puppetdb-terminus',
+      legacy_terminus    => $puppetdb::terminus_package == 'puppetdb-terminus',
       require            => $puppetdb_conf_require,
     }
   }
@@ -192,5 +191,4 @@ class puppetdb::master::config (
       Class['puppetdb::master::report_processor'] ~> Service[$puppet_service_name]
     }
   }
-
 }

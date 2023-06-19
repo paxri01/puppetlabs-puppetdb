@@ -1,4 +1,7 @@
-# Private class for configuring the pg_ident.conf and pg_hba.conf files
+# @summary class for configuring the pg_ident.conf and pg_hba.conf files
+#
+# @api private
+#
 define puppetdb::database::postgresql_ssl_rules (
   String $database_name,
   String $database_username,
@@ -13,7 +16,7 @@ define puppetdb::database::postgresql_ssl_rules (
     address     => '0.0.0.0/0',
     auth_method => 'cert',
     order       => 0,
-    auth_option => "map=${identity_map_key} clientcert=1"
+    auth_option => "map=${identity_map_key} clientcert=1",
   }
 
   postgresql::server::pg_hba_rule { "Allow certificate mapped connections to ${database_name} as ${database_username} (ipv6)":
@@ -23,7 +26,7 @@ define puppetdb::database::postgresql_ssl_rules (
     address     => '::0/0',
     auth_method => 'cert',
     order       => 0,
-    auth_option => "map=${identity_map_key} clientcert=1"
+    auth_option => "map=${identity_map_key} clientcert=1",
   }
 
   postgresql::server::pg_ident_rule { "Map the SSL certificate of the server as a ${database_username} user":

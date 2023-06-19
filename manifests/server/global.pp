@@ -1,10 +1,12 @@
-# PRIVATE CLASS - do not use directly
-class puppetdb::server::global (
-  $vardir         = $puppetdb::params::vardir,
-  $confdir        = $puppetdb::params::confdir,
-  $puppetdb_user  = $puppetdb::params::puppetdb_user,
-  $puppetdb_group = $puppetdb::params::puppetdb_group,
-) inherits puppetdb::params {
+# @summary PRIVATE CLASS - do not use directly
+#
+# @api private
+#
+class puppetdb::server::global {
+  $confdir        = $puppetdb::confdir
+  $puppetdb_group = $puppetdb::puppetdb_group
+  $puppetdb_user  = $puppetdb::puppetdb_user
+  $vardir         = $puppetdb::vardir
 
   $config_ini = "${confdir}/config.ini"
 

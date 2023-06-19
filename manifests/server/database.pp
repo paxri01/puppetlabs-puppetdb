@@ -1,35 +1,37 @@
-# PRIVATE CLASS - do not use directly
-class puppetdb::server::database (
-  $database                  = $puppetdb::params::database,
-  $database_host             = $puppetdb::params::database_host,
-  $database_port             = $puppetdb::params::database_port,
-  $database_username         = $puppetdb::params::database_username,
-  $database_password         = $puppetdb::params::database_password,
-  $database_name             = $puppetdb::params::database_name,
-  $manage_db_password        = $puppetdb::params::manage_db_password,
-  $jdbc_ssl_properties       = $puppetdb::params::jdbc_ssl_properties,
-  $database_validate         = $puppetdb::params::database_validate,
-  $database_embedded_path    = $puppetdb::params::database_embedded_path,
-  $node_ttl                  = $puppetdb::params::node_ttl,
-  $node_purge_ttl            = $puppetdb::params::node_purge_ttl,
-  $report_ttl                = $puppetdb::params::report_ttl,
-  $facts_blacklist           = $puppetdb::params::facts_blacklist,
-  $gc_interval               = $puppetdb::params::gc_interval,
-  $node_purge_gc_batch_limit = $puppetdb::params::node_purge_gc_batch_limit,
-  $log_slow_statements       = $puppetdb::params::log_slow_statements,
-  $conn_max_age              = $puppetdb::params::conn_max_age,
-  $conn_keep_alive           = $puppetdb::params::conn_keep_alive,
-  $conn_lifetime             = $puppetdb::params::conn_lifetime,
-  $confdir                   = $puppetdb::params::confdir,
-  $puppetdb_user             = $puppetdb::params::puppetdb_user,
-  $puppetdb_group            = $puppetdb::params::puppetdb_group,
-  $database_max_pool_size    = $puppetdb::params::database_max_pool_size,
-  $migrate                   = $puppetdb::params::migrate,
-  $postgresql_ssl_on         = $puppetdb::params::postgresql_ssl_on,
-  $ssl_cert_path             = $puppetdb::params::ssl_cert_path,
-  $ssl_key_pk8_path          = $puppetdb::params::ssl_key_pk8_path,
-  $ssl_ca_cert_path          = $puppetdb::params::ssl_ca_cert_path
-) inherits puppetdb::params {
+# @summary PRIVATE CLASS - do not use directly
+#
+# @api private
+#
+class puppetdb::server::database {
+  $confdir                   = $puppetdb::confdir
+  $conn_keep_alive           = $puppetdb::conn_keep_alive
+  $conn_lifetime             = $puppetdb::conn_lifetime
+  $conn_max_age              = $puppetdb::conn_max_age
+  $database                  = $puppetdb::database
+  $database_embedded_path    = $puppetdb::database_embedded_path
+  $database_host             = $puppetdb::database_host
+  $database_max_pool_size    = $puppetdb::database_max_pool_size
+  $database_name             = $puppetdb::database_name
+  $database_password         = $puppetdb::database_password
+  $database_port             = $puppetdb::database_port
+  $database_username         = $puppetdb::database_username
+  $database_validate         = $puppetdb::database_validate
+  $facts_blacklist           = $puppetdb::facts_blacklist
+  $gc_interval               = $puppetdb::gc_interval
+  $jdbc_ssl_properties       = $puppetdb::jdbc_ssl_properties
+  $log_slow_statements       = $puppetdb::log_slow_statements
+  $manage_db_password        = $puppetdb::manage_db_password
+  $migrate                   = $puppetdb::migrate
+  $node_purge_gc_batch_limit = $puppetdb::node_purge_gc_batch_limit
+  $node_purge_ttl            = $puppetdb::node_purge_ttl
+  $node_ttl                  = $puppetdb::node_ttl
+  $postgresql_ssl_on         = $puppetdb::postgresql_ssl_on
+  $puppetdb_group            = $puppetdb::puppetdb_group
+  $puppetdb_user             = $puppetdb::puppetdb_user
+  $report_ttl                = $puppetdb::report_ttl
+  $ssl_ca_cert_path          = $puppetdb::ssl_ca_cert_path
+  $ssl_cert_path             = $puppetdb::ssl_cert_path
+  $ssl_key_pk8_path          = $puppetdb::ssl_key_pk8_path
 
   if str2bool($database_validate) {
     # Validate the database connection.  If we can't connect, we want to fail
@@ -69,56 +71,56 @@ class puppetdb::server::database (
     path    => $database_ini,
     ensure  => present,
     section => 'database',
-    require => $ini_setting_require
+    require => $ini_setting_require,
   }
 
-  if $database == 'embedded' {
-
-    $classname = 'org.hsqldb.jdbcDriver'
-    $subprotocol = 'hsqldb'
-    $subname = "file:${database_embedded_path};hsqldb.tx=mvcc;sql.syntax_pgs=true"
-
-  } elsif $database == 'postgres' {
-    $classname = 'org.postgresql.Driver'
-    $subprotocol = 'postgresql'
-
-    if !empty($jdbc_ssl_properties) {
-      $database_suffix = $jdbc_ssl_properties
+  case $database {
+    'embedded': {
+      $classname = 'org.hsqldb.jdbcDriver'
+      $subprotocol = 'hsqldb'
+      $subname = "file:${database_embedded_path};hsqldb.tx=mvcc;sql.syntax_pgs=true"
     }
-    else {
-      $database_suffix = ''
-    }
+    'postgres': {
+      $classname = 'org.postgresql.Driver'
+      $subprotocol = 'postgresql'
 
-    $subname_default = "//${database_host}:${database_port}/${database_name}${database_suffix}"
+      if !empty($jdbc_ssl_properties) {
+        $database_suffix = $jdbc_ssl_properties
+      } else {
+        $database_suffix = ''
+      }
 
-    if $postgresql_ssl_on and !empty($jdbc_ssl_properties)
-    {
-      fail("Variables 'postgresql_ssl_on' and 'jdbc_ssl_properties' can not be used at the same time!")
-    }
+      $subname_default = "//${database_host}:${database_port}/${database_name}${database_suffix}"
 
-    if $postgresql_ssl_on {
-      $subname = @("EOT"/L)
-        ${subname_default}?\
-        ssl=true&sslfactory=org.postgresql.ssl.LibPQFactory&\
-        sslmode=verify-full&sslrootcert=${ssl_ca_cert_path}&\
-        sslkey=${ssl_key_pk8_path}&sslcert=${ssl_cert_path}\
-        | EOT
-    } else {
-      $subname = $subname_default
-    }
+      if $postgresql_ssl_on and !empty($jdbc_ssl_properties) {
+        fail("Variables 'postgresql_ssl_on' and 'jdbc_ssl_properties' can not be used at the same time!")
+      }
 
-    ##Only setup for postgres
-    ini_setting { 'puppetdb_psdatabase_username':
-      setting => 'username',
-      value   => $database_username,
-    }
+      if $postgresql_ssl_on {
+        $subname = @("EOT"/L)
+          ${subname_default}?\
+          ssl=true&sslfactory=org.postgresql.ssl.LibPQFactory&\
+          sslmode=verify-full&sslrootcert=${ssl_ca_cert_path}&\
+          sslkey=${ssl_key_pk8_path}&sslcert=${ssl_cert_path}\
+          | EOT
+      } else {
+        $subname = $subname_default
+      }
 
-    if $database_password != undef and $manage_db_password {
-      ini_setting { 'puppetdb_psdatabase_password':
-        setting => 'password',
-        value   => $database_password,
+      ##Only setup for postgres
+      ini_setting { 'puppetdb_psdatabase_username':
+        setting => 'username',
+        value   => $database_username,
+      }
+
+      if $database_password != undef and $manage_db_password {
+        ini_setting { 'puppetdb_psdatabase_password':
+          setting => 'password',
+          value   => $database_password,
+        }
       }
     }
+    default: { fail("Unsupported database type: ${database}") }
   }
 
   ini_setting { 'puppetdb_classname':

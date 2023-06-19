@@ -1,12 +1,14 @@
-# PRIVATE CLASS - do not use directly
-class puppetdb::server::puppetdb (
-  $certificate_whitelist_file = $puppetdb::params::certificate_whitelist_file,
-  $certificate_whitelist      = $puppetdb::params::certificate_whitelist,
-  $disable_update_checking    = $puppetdb::params::disable_update_checking,
-  $confdir                    = $puppetdb::params::confdir,
-  $puppetdb_user              = $puppetdb::params::puppetdb_user,
-  $puppetdb_group             = $puppetdb::params::puppetdb_group,
-) inherits puppetdb::params {
+# @summary PRIVATE CLASS - do not use directly
+#
+# @api private
+#
+class puppetdb::server::puppetdb {
+  $certificate_whitelist      = $puppetdb::certificate_whitelist
+  $certificate_whitelist_file = $puppetdb::certificate_whitelist_file
+  $confdir                    = $puppetdb::confdir
+  $disable_update_checking    = $puppetdb::disable_update_checking
+  $puppetdb_group             = $puppetdb::puppetdb_group
+  $puppetdb_user              = $puppetdb::puppetdb_user
 
   $puppetdb_ini = "${confdir}/puppetdb.ini"
 
@@ -31,7 +33,7 @@ class puppetdb::server::puppetdb (
   }
 
   # accept connections only from puppet master
-  ini_setting {'puppetdb-connections-from-master-only':
+  ini_setting { 'puppetdb-connections-from-master-only':
     ensure  => $certificate_whitelist_setting_ensure,
     section => 'puppetdb',
     setting => 'certificate-whitelist',
