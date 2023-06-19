@@ -46,16 +46,7 @@ class puppetdb::database::postgresql {
     # configure PostgreSQL communication with Puppet Agent SSL certificates if
     # postgresql_ssl_on is set to true
     if $postgresql_ssl_on {
-      class { 'puppetdb::database::ssl_configuration':
-        create_read_user_rule       => $create_read_user_rule,
-        database_name               => $database_name,
-        database_username           => $database_username,
-        postgresql_ssl_ca_cert_path => $postgresql_ssl_ca_cert_path,
-        postgresql_ssl_cert_path    => $postgresql_ssl_cert_path,
-        postgresql_ssl_key_path     => $postgresql_ssl_key_path,
-        puppetdb_server             => $puppetdb_server,
-        read_database_username      => $read_database_username,
-      }
+      class { 'puppetdb::database::ssl_configuration': }
     }
 
     # Only install pg_trgm extension, if database it is actually managed by the module
