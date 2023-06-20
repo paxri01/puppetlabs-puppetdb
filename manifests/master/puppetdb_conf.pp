@@ -2,11 +2,19 @@
 #
 # @see README.md for more details.
 #
-class puppetdb::master::puppetdb_conf {
-  $server             = 'localhost'
-  $port               = '8081'
-  $puppet_confdir     = $puppetdb::puppet_confdir
-
+# @param server
+#   The dns name or ip of the PuppetDB server. Defaults to the hostname of the current node,
+#   i.e. '$::fqdn'.
+# @param port
+#   The port that the PuppetDB server is running on. Defaults to '8081'.
+# @param puppet_confdir
+#   Puppet's config directory. Defaults to '/etc/puppetlabs/puppetdb'.
+#
+class puppetdb::master::puppetdb_conf (
+  Stdlib::Host          $server             = 'localhost',
+  Stdlib::Port          $port               = 8081,
+  Stdlib::Absolutepath  $puppet_confdir     = '/etc/puppetlabs/puppetdb',
+) {
   $soft_write_failure = $puppetdb::disable_ssl ? {
     true => true,
     default => false,
@@ -15,6 +23,21 @@ class puppetdb::master::puppetdb_conf {
     /(puppetdb-terminus)/ => true,
     default               => false,
   }
+
+  # Debug params
+  $debug_puppetdb_conf = @("EOC"/)
+    \n
+      puppetdb::master::puppetdb_conf params
+
+                                   puppet_confdir: ${puppet_confdir}
+                                           server: ${server}
+                                             port: ${port}
+                               soft_write_failure: ${soft_write_failure}
+                                  legacy_terminus: ${legacy_terminus}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_master_puppetdb_conf: ${debug_puppetdb_conf}": }
 
   Ini_setting {
     ensure  => present,

@@ -2,11 +2,25 @@
 #
 # @api private
 #
-class puppetdb::server::global {
-  $confdir        = $puppetdb::confdir
-  $puppetdb_group = $puppetdb::puppetdb_group
-  $puppetdb_user  = $puppetdb::puppetdb_user
-  $vardir         = $puppetdb::vardir
+class puppetdb::server::global (
+  Stdlib::Absolutepath    $confdir         = $puppetdb::params::confdir,
+  String                  $puppetdb_group  = $puppetdb::params::puppetdb_group,
+  String                  $puppetdb_user   = $puppetdb::params::puppetdb_user,
+  Stdlib::Absolutepath    $vardir          = $puppetdb::params::vardir,
+) {
+  # Debug params
+  $debug_global = @("EOC"/)
+    \n
+      Puppetdb::Server::Global params
+
+                                          confdir: ${confdir}
+                                   puppetdb_group: ${puppetdb_group}
+                                    puppetdb_user: ${puppetdb_user}
+                                           vardir: ${vardir}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_global: ${debug_global}": }
 
   $config_ini = "${confdir}/config.ini"
 

@@ -400,7 +400,7 @@ class puppetdb (
   Boolean                        $database_validate                 = true,
   Boolean                        $disable_cleartext                 = false,
   Boolean                        $disable_ssl                       = false,
-  Optional[String]               $disable_update_checking           = undef,
+  Optional[Boolean]              $disable_update_checking           = undef,
   Integer                        $dlo_max_age                       = 90,
   Boolean                        $enable_reports                    = false,
   Boolean                        $enable_storeconfigs               = true,
@@ -440,7 +440,7 @@ class puppetdb (
   Boolean                        $postgresql_ssl_on                 = false,
   String                         $postgres_version                  = $puppetdb::params::postgres_version,
   Stdlib::Absolutepath           $puppet_conf                       = $puppetdb::params::puppet_conf,
-  Stdlib::Absolutepath           $puppet_confdir                    = $puppetdb::params::puppet_conf,
+  Stdlib::Absolutepath           $puppet_confdir                    = $puppetdb::params::puppet_confdir,
   String                         $puppet_service_name               = $puppetdb::params::puppet_service_name,
   Boolean                        $puppetdb_disable_ssl              = false,
   Stdlib::Absolutepath           $puppetdb_initconf                 = $puppetdb::params::puppetdb_initconf,
@@ -449,7 +449,7 @@ class puppetdb (
   String                         $puppetdb_package                  = 'puppetdb',
   Stdlib::Host                   $puppetdb_server                   = fact('networking.fqdn'),
   String                         $puppetdb_service                  = 'puppetdb',
-  String                         $puppetdb_version                  = $puppetdb::params::puppetdb_version,
+  String                         $puppetdb_version                  = 'present',
   Enum['true','false','running','stopped']  $puppetdb_service_status  = 'running',
   Boolean                        $puppetdb_soft_write_failure       = false,
   Integer                        $puppetdb_startup_timeout          = 120,
@@ -488,7 +488,7 @@ class puppetdb (
   String                         $terminus_package                  = $puppetdb::params::terminus_package,
   String                         $test_url                          = '/v3/version',
   Stdlib::Absolutepath           $vardir                            = $puppetdb::params::vardir,
-) {
+) inherits puppetdb::params {
   #
   class { 'puppetdb::server': }
 

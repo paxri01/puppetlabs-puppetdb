@@ -2,10 +2,26 @@
 #
 # @see README.md for more details.
 #
-class puppetdb::master::report_processor {
-  $puppet_conf = $puppetdb::puppet_conf
-  $masterless  = $puppetdb::masterless
-  $enable      = false
+# @param puppet_conf
+# @param masterless
+# @param enable
+#
+class puppetdb::master::report_processor (
+  Stdlib::Absolutepath  $puppet_conf   = $puppetdb::params::puppet_conf,
+  Boolean               $masterless    = false,
+  Boolean               $enable        = false,
+) {
+  # Debug params
+  $debug_report_processor = @("EOC"/)
+    \n
+    puppetdb::master::report_processor params
+      puppet_conf: ${puppet_conf}
+       masterless: ${masterless}
+           enable: ${enable}
+
+    | EOC
+
+  notify { "DEBUG_master_report_processor: ${debug_report_processor}": }
 
   if $masterless {
     $puppet_conf_section = 'main'

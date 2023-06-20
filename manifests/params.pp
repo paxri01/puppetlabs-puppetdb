@@ -30,21 +30,21 @@ class puppetdb::params inherits puppetdb::globals {
         $etcdir                 = '/etc/puppetdb'
         $vardir                 = '/var/lib/puppetdb'
         $database_embedded_path = "${vardir}/db/db"
-        $puppet_confdir         = pick($settings::confdir,'/etc/puppet')
+        $puppet_confdir         = pick($settings::confdir,'/etc/puppetlabs/puppet')
         $puppet_service_name    = 'puppetmaster'
       }
       'OpenBSD': {
         $etcdir                 = '/etc/puppetdb'
         $vardir                 = '/var/db/puppetdb'
         $database_embedded_path = "${vardir}/db/db"
-        $puppet_confdir         = pick($settings::confdir,'/etc/puppet')
+        $puppet_confdir         = pick($settings::confdir,'/etc/puppetlabs/puppet')
         $puppet_service_name    = 'puppetmasterd'
       }
       'FreeBSD': {
         $etcdir                 = '/usr/local/etc/puppetdb'
         $vardir                 = '/var/db/puppetdb'
         $database_embedded_path = "${vardir}/db/db"
-        $puppet_confdir         = pick($settings::confdir,'/usr/local/etc/puppet')
+        $puppet_confdir         = pick($settings::confdir,'/usr/local/etc/puppetlabs/puppet')
         $puppet_service_name    = 'puppetmaster'
       }
       default: {

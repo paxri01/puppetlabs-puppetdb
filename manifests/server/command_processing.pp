@@ -2,12 +2,27 @@
 #
 # @api private
 #
-class puppetdb::server::command_processing {
-  $command_threads   = $puppetdb::command_threads
-  $concurrent_writes = $puppetdb::concurrent_writes
-  $confdir           = $puppetdb::confdir
-  $store_usage       = $puppetdb::store_usage
-  $temp_usage        = $puppetdb::temp_usage
+class puppetdb::server::command_processing (
+  Optional[String]      $command_threads    = undef,
+  Optional[String]      $concurrent_writes  = undef,
+  Stdlib::Absolutepath  $confdir            = $puppetdb::params::confdir,
+  Optional[String]      $store_usage        = undef,
+  Optional[String]      $temp_usage         = undef,
+) {
+  # Debug params
+  $debug_command_processing = @("EOC"/)
+    \n
+      Puppetdb::Server::Command_processing params
+
+                                  command_threads: ${command_threads}
+                                concurrent_writes: ${concurrent_writes}
+                                          confdir: ${confdir}
+                                      store_usage: ${store_usage}
+                                       temp_usage: ${temp_usage}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_command_processing: ${debug_command_processing}": }
 
   $config_ini = "${confdir}/config.ini"
 

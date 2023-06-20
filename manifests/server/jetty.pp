@@ -2,23 +2,49 @@
 #
 # @api private
 #
-class puppetdb::server::jetty {
-  $cipher_suites                  = $puppetdb::cipher_suites
-  $confdir                        = $puppetdb::confdir
-  $disable_cleartext              = $puppetdb::disable_cleartext
-  $disable_ssl                    = $puppetdb::disable_ssl
-  $listen_address                 = $puppetdb::listen_address
-  $listen_port                    = $puppetdb::listen_port
-  $max_threads                    = $puppetdb::max_threads
-  $puppetdb_group                 = $puppetdb::puppetdb_group
-  $puppetdb_user                  = $puppetdb::puppetdb_user
-  $ssl_ca_cert_path               = $puppetdb::ssl_ca_cert_path
-  $ssl_cert_path                  = $puppetdb::ssl_cert_path
-  $ssl_key_path                   = $puppetdb::ssl_key_path
-  $ssl_listen_address             = $puppetdb::ssl_listen_address
-  $ssl_listen_port                = $puppetdb::ssl_listen_port
-  $ssl_protocols                  = $puppetdb::ssl_protocols
-  $ssl_set_cert_paths             = $puppetdb::ssl_set_cert_paths
+class puppetdb::server::jetty (
+  Optional[String]                     $cipher_suites       = $puppetdb::params::cipher_suites,
+  Stdlib::Absolutepath                 $confdir             = $puppetdb::params::confdir,
+  Boolean                              $disable_cleartext   = false,
+  Boolean                              $disable_ssl         = false,
+  Stdlib::Host                         $listen_address      = 'localhost',
+  Stdlib::Port                         $listen_port         = 8080,
+  Optional[String]                     $max_threads         = undef,
+  String                               $puppetdb_group      = $puppetdb::params::puppetdb_group,
+  String                               $puppetdb_user       = $puppetdb::params::puppetdb_user,
+  Stdlib::Absolutepath                 $ssl_ca_cert_path    = $puppetdb::params::ssl_ca_cert_path,
+  Stdlib::Absolutepath                 $ssl_cert_path       = $puppetdb::params::ssl_cert_path,
+  Stdlib::Absolutepath                 $ssl_key_path        = $puppetdb::params::ssl_key_path,
+  Stdlib::IP::Address                  $ssl_listen_address  = '0.0.0.0',
+  Stdlib::Port                         $ssl_listen_port     = 8081,
+  Optional[Enum['TLSv1.2','TLSv1.3']]  $ssl_protocols       = undef,
+  Boolean                              $ssl_set_cert_paths  = false,
+) inherits puppetdb::params {
+  # Debug params
+  $debug_jetty = @("EOC"/)
+    \n
+      Puppetdb::Server::Jetty params
+
+                                    cipher_suites: ${cipher_suites}
+                                          confdir: ${confdir}
+                                disable_cleartext: ${disable_cleartext}
+                                      disable_ssl: ${disable_ssl}
+                                   listen_address: ${listen_address}
+                                      listen_port: ${listen_port}
+                                      max_threads: ${max_threads}
+                                   puppetdb_group: ${puppetdb_group}
+                                    puppetdb_user: ${puppetdb_user}
+                                 ssl_ca_cert_path: ${ssl_ca_cert_path}
+                                    ssl_cert_path: ${ssl_cert_path}
+                                     ssl_key_path: ${ssl_key_path}
+                               ssl_listen_address: ${ssl_listen_address}
+                                  ssl_listen_port: ${ssl_listen_port}
+                                    ssl_protocols: ${ssl_protocols}
+                               ssl_set_cert_paths: ${ssl_set_cert_paths}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_jetty: ${debug_jetty}": }
 
   $jetty_ini = "${confdir}/jetty.ini"
 

@@ -2,10 +2,25 @@
 #
 # @see README.md for more details.
 #
-class puppetdb::master::routes {
-  $puppet_confdir = $puppetdb::puppet_confdir
-  $masterless     = $puppetdb::masterless
-  $routes         = undef
+# @param puppet_confdir
+# @param masterless
+# @param routes
+#
+class puppetdb::master::routes (
+  Stdlib::Absolutepath     $puppet_confdir   = $puppetdb::params::puppet_confdir,
+  Boolean                  $masterless       = false,
+  Optional[String]         $routes           = undef,
+) inherits puppetdb::params {
+  # Debug params
+  $debug_routes = @("EOC"/)
+    \n
+    puppetdb::master::routes params
+      puppet_confdir: ${puppet_confdir}
+          masterless: ${masterless}
+              routes: ${routes}
+
+    | EOC
+  notify { "DEBUG_master_routes: ${debug_routes}": }
 
   if $masterless {
     $routes_real = {
@@ -45,7 +60,7 @@ class puppetdb::master::routes {
   #  I don't think there is currently a puppet module or an augeas lens for
   #  this.
   file { "${puppet_confdir}/routes.yaml":
-    ensure  => file,
+    ensure  => 'file',
     content => template('puppetdb/routes.yaml.erb'),
     mode    => '0644',
   }

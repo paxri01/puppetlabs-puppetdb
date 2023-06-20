@@ -2,36 +2,75 @@
 #
 # @api private
 #
-class puppetdb::server::database {
-  $confdir                   = $puppetdb::confdir
-  $conn_keep_alive           = $puppetdb::conn_keep_alive
-  $conn_lifetime             = $puppetdb::conn_lifetime
-  $conn_max_age              = $puppetdb::conn_max_age
-  $database                  = $puppetdb::database
-  $database_embedded_path    = $puppetdb::database_embedded_path
-  $database_host             = $puppetdb::database_host
-  $database_max_pool_size    = $puppetdb::database_max_pool_size
-  $database_name             = $puppetdb::database_name
-  $database_password         = $puppetdb::database_password
-  $database_port             = $puppetdb::database_port
-  $database_username         = $puppetdb::database_username
-  $database_validate         = $puppetdb::database_validate
-  $facts_blacklist           = $puppetdb::facts_blacklist
-  $gc_interval               = $puppetdb::gc_interval
-  $jdbc_ssl_properties       = $puppetdb::jdbc_ssl_properties
-  $log_slow_statements       = $puppetdb::log_slow_statements
-  $manage_db_password        = $puppetdb::manage_db_password
-  $migrate                   = $puppetdb::migrate
-  $node_purge_gc_batch_limit = $puppetdb::node_purge_gc_batch_limit
-  $node_purge_ttl            = $puppetdb::node_purge_ttl
-  $node_ttl                  = $puppetdb::node_ttl
-  $postgresql_ssl_on         = $puppetdb::postgresql_ssl_on
-  $puppetdb_group            = $puppetdb::puppetdb_group
-  $puppetdb_user             = $puppetdb::puppetdb_user
-  $report_ttl                = $puppetdb::report_ttl
-  $ssl_ca_cert_path          = $puppetdb::ssl_ca_cert_path
-  $ssl_cert_path             = $puppetdb::ssl_cert_path
-  $ssl_key_pk8_path          = $puppetdb::ssl_key_pk8_path
+class puppetdb::server::database (
+  Stdlib::Absolutepath           $confdir                           = $puppetdb::params::confdir,
+  String                         $conn_keep_alive                   = '45',
+  String                         $conn_lifetime                     = '0',
+  String                         $conn_max_age                      = '60',
+  String                         $database                          = 'postgres',
+  Stdlib::Absolutepath           $database_embedded_path            = $puppetdb::params::database_embedded_path,
+  Stdlib::Host                   $database_host                     = 'localhost',
+  Optional[String]               $database_max_pool_size            = undef,
+  String                         $database_name                     = 'puppetdb',
+  String                         $database_password                 = 'puppetdb',
+  Stdlib::Port                   $database_port                     = 5432,
+  String                         $database_username                 = 'puppetdb',
+  Boolean                        $database_validate                 = true,
+  Optional[Array]                $facts_blacklist                   = undef,
+  String                         $gc_interval                       = '60',
+  Optional[String]               $jdbc_ssl_properties               = undef,
+  String                         $log_slow_statements               = '10',
+  Boolean                        $manage_db_password                = true,
+  Boolean                        $migrate                           = true,
+  String                         $node_purge_gc_batch_limit         = '25',
+  String                         $node_purge_ttl                    = '14d',
+  String                         $node_ttl                          = '7d',
+  Boolean                        $postgresql_ssl_on                 = false,
+  String                         $puppetdb_group                    = $puppetdb::params::puppetdb_group,
+  String                         $puppetdb_user                     = $puppetdb::params::puppetdb_user,
+  String                         $report_ttl                        = '14d',
+  Stdlib::Absolutepath           $ssl_ca_cert_path                  = $puppetdb::params::ssl_ca_cert_path,
+  Stdlib::Absolutepath           $ssl_cert_path                     = $puppetdb::params::ssl_cert_path,
+  Stdlib::Absolutepath           $ssl_key_pk8_path                  = $puppetdb::params::ssl_key_pk8_path,
+) inherits puppetdb::params {
+  # Debug params
+  $debug_database = @("EOC"/)
+    \n
+      puppetdb::server::database params
+
+                                          confdir: ${confdir}
+                                  conn_keep_alive: ${conn_keep_alive}
+                                    conn_lifetime: ${conn_lifetime}
+                                     conn_max_age: ${conn_max_age}
+                                         database: ${database}
+                           database_embedded_path: ${database_embedded_path}
+                                    database_host: ${database_host}
+                           database_max_pool_size: ${database_max_pool_size}
+                                    database_name: ${database_name}
+                                database_password: ${database_password}
+                                    database_port: ${database_port}
+                                database_username: ${database_username}
+                                database_validate: ${database_validate}
+                                  facts_blacklist: ${facts_blacklist}
+                                      gc_interval: ${gc_interval}
+                              jdbc_ssl_properties: ${jdbc_ssl_properties}
+                              log_slow_statements: ${log_slow_statements}
+                               manage_db_password: ${manage_db_password}
+                                          migrate: ${migrate}
+                        node_purge_gc_batch_limit: ${node_purge_gc_batch_limit}
+                                   node_purge_ttl: ${node_purge_ttl}
+                                         node_ttl: ${node_ttl}
+                                postgresql_ssl_on: ${postgresql_ssl_on}
+                                   puppetdb_group: ${puppetdb_group}
+                                    puppetdb_user: ${puppetdb_user}
+                                       report_ttl: ${report_ttl}
+                                 ssl_ca_cert_path: ${ssl_ca_cert_path}
+                                    ssl_cert_path: ${ssl_cert_path}
+                                 ssl_key_pk8_path: ${ssl_key_pk8_path}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_database: ${debug_database}": }
 
   if str2bool($database_validate) {
     # Validate the database connection.  If we can't connect, we want to fail

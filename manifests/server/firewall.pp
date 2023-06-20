@@ -2,11 +2,27 @@
 #
 # @api private
 #
-class puppetdb::server::firewall {
-  $http_port      = $puppetdb::listen_port
-  $open_http_port = $puppetdb::open_listen_port
-  $ssl_port       = $puppetdb::ssl_listen_port
-  $open_ssl_port  = $puppetdb::open_ssl_listen_port
+# @note This class should be updated to use firewalld vs. firewall.
+#
+class puppetdb::server::firewall (
+  Stdlib::Port             $http_port       = 8080,
+  Boolean                  $open_http_port  = false,
+  Stdlib::Port             $ssl_port        = 8081,
+  Optional[Stdlib::Port]   $open_ssl_port   = undef,
+) {
+  # Debug params
+  $debug_firewall = @("EOC"/)
+    \n
+      Puppetdb::Server::Firewall params
+
+                                        http_port: ${http_port}
+                                 open_listen_port: ${open_http_port}
+                                  ssl_listen_port: ${ssl_port}
+                             open_ssl_listen_port: ${open_ssl_port}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_firewall: ${debug_firewall}": }
 
   include firewall
 

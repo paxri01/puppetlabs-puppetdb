@@ -2,28 +2,61 @@
 #
 # @api private
 #
-class puppetdb::server::read_database {
-  $confdir                = $puppetdb::confdir
-  $conn_keep_alive        = $puppetdb::read_conn_keep_alive
-  $conn_lifetime          = $puppetdb::read_conn_lifetime
-  $conn_max_age           = $puppetdb::read_conn_max_age
-  $database_max_pool_size = $puppetdb::read_database_max_pool_size
-  $database_validate      = $puppetdb::read_database_validate
-  $jdbc_ssl_properties    = $puppetdb::read_database_jdbc_ssl_properties
-  $log_slow_statements    = $puppetdb::read_log_slow_statements
-  $manage_db_password     = $puppetdb::manage_read_db_password
-  $postgresql_ssl_on      = $puppetdb::postgresql_ssl_on
-  $puppetdb_group         = $puppetdb::puppetdb_group
-  $puppetdb_user          = $puppetdb::puppetdb_user
-  $read_database          = $puppetdb::read_database
-  $read_database_host     = $puppetdb::read_database_host
-  $read_database_name     = $puppetdb::read_database_name
-  $read_database_password = $puppetdb::read_database_password
-  $read_database_port     = $puppetdb::read_database_port
-  $read_database_username = $puppetdb::read_database_username
-  $ssl_ca_cert_path       = $puppetdb::ssl_ca_cert_path
-  $ssl_cert_path          = $puppetdb::ssl_cert_path
-  $ssl_key_pk8_path       = $puppetdb::ssl_key_pk8_path
+class puppetdb::server::read_database (
+  Stdlib::Absolutepath     $confdir                 = $puppetdb::params::confdir,
+  String                   $conn_keep_alive         = '45',
+  String                   $conn_lifetime           = '0',
+  String                   $conn_max_age            = '60',
+  Optional[String]         $database_max_pool_size  = undef,
+  Boolean                  $database_validate       = true,
+  Optional[String]         $jdbc_ssl_properties     = undef,
+  String                   $log_slow_statements     = '10',
+  Boolean                  $manage_db_password      = true,
+  Boolean                  $postgresql_ssl_on       = false,
+  String                   $puppetdb_group          = $puppetdb::params::puppetdb_group,
+  String                   $puppetdb_user           = $puppetdb::params::puppetdb_user,
+  String                   $read_database           = 'postgres',
+  Optional[String]         $read_database_host      = undef,
+  String                   $read_database_name      = 'puppetdb',
+  String                   $read_database_password  = 'puppetdb-read',
+  Stdlib::Port             $read_database_port      = 5432,
+  String                   $read_database_username  = 'puppetdb-read',
+  Stdlib::Absolutepath     $ssl_ca_cert_path        = $puppetdb::params::ssl_ca_cert_path,
+  Stdlib::Absolutepath     $ssl_cert_path           = $puppetdb::params::ssl_cert_path,
+  Stdlib::Absolutepath     $ssl_key_pk8_path        = $puppetdb::params::ssl_key_pk8_path,
+) inherits puppetdb::params {
+  # Debug code
+  $debug_read_database = @("EOC"/)
+    \n
+      Puppetdb::Server::Read_database params
+
+                                          confdir: ${confdir}
+                                   puppetdb_group: ${puppetdb_group}
+                                    puppetdb_user: ${puppetdb_user}
+                                  conn_keep_alive: ${conn_keep_alive}
+                                    conn_lifetime: ${conn_lifetime}
+                                     conn_max_age: ${conn_max_age}
+                           database_max_pool_size: ${database_max_pool_size}
+                                database_validate: ${database_validate}
+                              jdbc_ssl_properties: ${jdbc_ssl_properties}
+                              log_slow_statements: ${log_slow_statements}
+                               manage_db_password: ${manage_db_password}
+                                postgresql_ssl_on: ${postgresql_ssl_on}
+                                   puppetdb_group: ${puppetdb_group}
+                                    puppetdb_user: ${puppetdb_user}
+                                    read_database: ${read_database}
+                               read_database_host: ${read_database_host}
+                               read_database_name: ${read_database_name}
+                           read_database_password: ${read_database_password}
+                               read_database_port: ${read_database_port}
+                           read_database_username: ${read_database_username}
+                                 ssl_ca_cert_path: ${ssl_ca_cert_path}
+                                    ssl_cert_path: ${ssl_cert_path}
+                                 ssl_key_pk8_path: ${ssl_key_pk8_path}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_read_database: ${debug_read_database}": }
 
   if $read_database_host != undef {
     if str2bool($database_validate) {
