@@ -246,7 +246,7 @@
 #   The port that the PuppetDB server is running on. Defaults to '8081'.
 # @param puppetdb_server
 #   The dns name or ip of the PuppetDB server. Defaults to the hostname of the current node,
-#   i.e. '$::fqdn'.
+#   i.e. '$facts['networking']['fqdn']'.
 # @param puppetdb_service
 #   The name of the PuppetDB service. Defaults to 'puppetdb'.
 # @param puppetdb_service_status
@@ -443,16 +443,16 @@ class puppetdb (
   Stdlib::Absolutepath           $puppet_confdir                    = $puppetdb::params::puppet_confdir,
   String                         $puppet_service_name               = $puppetdb::params::puppet_service_name,
   Boolean                        $puppetdb_disable_ssl              = false,
-  Stdlib::Absolutepath           $puppetdb_initconf                 = $puppetdb::params::puppetdb_initconf,
-  Optional[Stdlib::Port]         $puppetdb_port                     = undef,
   String                         $puppetdb_group                    = $puppetdb::params::puppetdb_group,
+  Stdlib::Absolutepath           $puppetdb_initconf                 = $puppetdb::params::puppetdb_initconf,
   String                         $puppetdb_package                  = 'puppetdb',
+  Optional[Stdlib::Port]         $puppetdb_port                     = undef,
   Stdlib::Host                   $puppetdb_server                   = fact('networking.fqdn'),
   String                         $puppetdb_service                  = 'puppetdb',
-  String                         $puppetdb_version                  = 'present',
   Enum['true','false','running','stopped']  $puppetdb_service_status  = 'running',
   Boolean                        $puppetdb_soft_write_failure       = false,
   Integer                        $puppetdb_startup_timeout          = 120,
+  String                         $puppetdb_version                  = 'present',
   String                         $puppetdb_user                     = $puppetdb::params::puppetdb_user,
   String                         $read_conn_keep_alive              = '45',
   String                         $read_conn_lifetime                = '0',

@@ -2,16 +2,59 @@
 #
 # @see README.md for more information.
 #
-class puppetdb::database::ssl_configuration {
-  $create_read_user_rule       = $puppetdb::create_read_user_rule
-  $database_name               = $puppetdb::database_name
-  $database_username           = $puppetdb::database_username
-  $postgresql_ssl_ca_cert_path = $puppetdb::postgresql_ssl_ca_cert_path
-  $postgresql_ssl_cert_path    = $puppetdb::postgresql_ssl_cert_path
-  $postgresql_ssl_key_path     = $puppetdb::postgresql_ssl_key_path
-  $puppetdb_server             = $puppetdb::puppetdb_server
-  $read_database_host          = $puppetdb::read_database_host
-  $read_database_username      = $puppetdb::read_database_username
+# @param create_read_user_rule
+#   Boolean to create ssl connection for the read user.
+# @param database_name
+#   The name of the database instance to connect to. Defaults to 'puppetdb', ignored
+#   for 'embedded' database.
+# @param database_username
+#   The name of the database user to connect as. Defaults to 'puppetdb', ignored for
+#   'embedded' database.
+# @param postgresql_ssl_ca_cert_path
+# @param postgresql_ssl_cert_path
+# @param postgresql_ssl_key_path
+# @param puppetdb_server
+#   The dns name or ip of the PuppetDB server. Defaults to the hostname of the current node,
+#   i.e. '$facts['networking']['fqdn']'.
+# @param read_database_host
+#   *This parameter must be set to use another PuppetDB instance for queries.*
+#
+#   The hostname or IP address of the read database server. If set to 'undef', and
+#   'manage_database' is set to 'true', it will use the value of the 'database_host'
+#   parameter. This option is supported in PuppetDB >= 1.6.
+# @param read_database_username
+#   The name of the read database user to connect as. Defaults to 'puppetdb-read'.
+#   This option is supported in PuppetDB >= 1.6.
+#
+class puppetdb::database::ssl_configuration (
+  Boolean                $create_read_user_rule        = undef,
+  String                 $database_name                = 'puppetdb',
+  String                 $database_username            = 'puppetdb',
+  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::params::postgresql_ssl_ca_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::params::postgresql_ssl_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::params::postgresql_ssl_key_path,
+  Stdlib::Host           $puppetdb_server              = fact('networking.fqdn'),
+  Optional[String]       $read_database_host           = undef,
+  String                 $read_database_username       = 'puppetdb-read',
+) {
+  # Debug params
+  $debug_ssl_configuration = @("EOC"/)
+    \n
+      Puppetdb::Database::Ssl_configuration params
+
+                            create_read_user_rule: ${create_read_user_rule}
+                                    database_name: ${database_name}
+                                database_username: ${database_username}
+                      postgresql_ssl_ca_cert_path: ${postgresql_ssl_ca_cert_path}
+                         postgresql_ssl_cert_path: ${postgresql_ssl_cert_path}
+                          postgresql_ssl_key_path: ${postgresql_ssl_key_path}
+                                  puppetdb_server: ${puppetdb_server}
+                               read_database_host: ${read_database_host}
+                           read_database_username: ${read_database_username}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_database_postgresql: ${debug_ssl_configuration}": }
 
   File {
     ensure  => 'present',
@@ -66,7 +109,7 @@ class puppetdb::database::ssl_configuration {
     puppetdb_server   => $puppetdb_server,
   }
 
-  if $create_read_user_rule {
+  if $create_read_user_rule == true {
     puppetdb::database::postgresql_ssl_rules { "Configure postgresql ssl rules for ${read_database_username}":
       database_name     => $database_name,
       database_username => $read_database_username,

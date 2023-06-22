@@ -1,87 +1,170 @@
 # @summary Class to configure a PuppetDB server. See README.md for more details.
 #
-class puppetdb::server {
-  $automatic_dlo_cleanup              = $puppetdb::automatic_dlo_cleanup
-  $certificate_whitelist              = $puppetdb::certificate_whitelist
-  $certificate_whitelist_file         = $puppetdb::certificate_whitelist_file
-  $cipher_suites                      = $puppetdb::cipher_suites
-  $cleanup_timer_interval             = $puppetdb::cleanup_timer_interval
-  $command_threads                    = $puppetdb::command_threads
-  $concurrent_writes                  = $puppetdb::concurrent_writes
-  $confdir                            = $puppetdb::confdir
-  $conn_keep_alive                    = $puppetdb::conn_keep_alive
-  $conn_lifetime                      = $puppetdb::conn_lifetime
-  $conn_max_age                       = $puppetdb::conn_max_age
-  $database                           = $puppetdb::database
-  $database_embedded_path             = $puppetdb::database_embedded_path
-  $database_host                      = $puppetdb::database_host
-  $database_max_pool_size             = $puppetdb::database_max_pool_size
-  $database_name                      = $puppetdb::database_name
-  $database_password                  = $puppetdb::database_password
-  $database_port                      = $puppetdb::database_port
-  $database_username                  = $puppetdb::database_username
-  $database_validate                  = $puppetdb::database_validate
-  $disable_cleartext                  = $puppetdb::disable_cleartext
-  $disable_ssl                        = $puppetdb::disable_ssl
-  $disable_update_checking            = $puppetdb::disable_update_checking
-  $dlo_max_age                        = $puppetdb::dlo_max_age
-  $facts_blacklist                    = $puppetdb::facts_blacklist
-  $gc_interval                        = $puppetdb::gc_interval
-  $java_args                          = $puppetdb::java_args
-  $java_bin                           = $puppetdb::java_bin
-  $jdbc_ssl_properties                = $puppetdb::jdbc_ssl_properties
-  $listen_address                     = $puppetdb::listen_address
-  $listen_port                        = $puppetdb::listen_port
-  $log_slow_statements                = $puppetdb::log_slow_statements
-  $manage_database                    = $puppetdb::manage_database
-  $manage_db_password                 = $puppetdb::manage_db_password
-  $manage_firewall                    = $puppetdb::manage_firewall
-  $manage_read_db_password            = $puppetdb::manage_read_db_password
-  $max_threads                        = $puppetdb::max_threads
-  $merge_default_java_args            = $puppetdb::merge_default_java_args
-  $migrate                            = $puppetdb::migrate
-  $node_purge_gc_batch_limit          = $puppetdb::node_purge_gc_batch_limit
-  $node_purge_ttl                     = $puppetdb::node_purge_ttl
-  $node_ttl                           = $puppetdb::node_ttl
-  $open_listen_port                   = $puppetdb::open_listen_port
-  $open_ssl_listen_port               = $puppetdb::open_ssl_listen_port
-  $postgresql_ssl_on                  = $puppetdb::postgresql_ssl_on
-  $puppetdb_group                     = $puppetdb::puppetdb_group
-  $puppetdb_initconf                  = $puppetdb::puppetdb_initconf
-  $puppetdb_package                   = $puppetdb::puppetdb_package
-  $puppetdb_service                   = $puppetdb::puppetdb_service
-  $puppetdb_service_status            = $puppetdb::puppetdb_service_status
-  $puppetdb_user                      = $puppetdb::puppetdb_user
-  $read_conn_keep_alive               = $puppetdb::read_conn_keep_alive
-  $read_conn_lifetime                 = $puppetdb::read_conn_lifetime
-  $read_conn_max_age                  = $puppetdb::read_conn_max_age
-  $read_database                      = $puppetdb::read_database
-  $read_database_host                 = $puppetdb::read_database_host
-  $read_database_jdbc_ssl_properties  = $puppetdb::read_database_jdbc_ssl_properties
-  $read_database_max_pool_size        = $puppetdb::read_database_max_pool_size
-  $read_database_name                 = $puppetdb::read_database_name
-  $read_database_password             = $puppetdb::read_database_password
-  $read_database_port                 = $puppetdb::read_database_port
-  $read_database_username             = $puppetdb::read_database_username
-  $read_database_validate             = $puppetdb::read_database_validate
-  $read_log_slow_statements           = $puppetdb::read_log_slow_statements
-  $report_ttl                         = $puppetdb::report_ttl
-  $ssl_ca_cert                        = $puppetdb::ssl_ca_cert
-  $ssl_ca_cert_path                   = $puppetdb::ssl_ca_cert_path
-  $ssl_cert                           = $puppetdb::ssl_cert
-  $ssl_cert_path                      = $puppetdb::ssl_cert_path
-  $ssl_deploy_certs                   = $puppetdb::ssl_deploy_certs
-  $ssl_dir                            = $puppetdb::ssl_dir
-  $ssl_key                            = $puppetdb::ssl_key
-  $ssl_key_path                       = $puppetdb::ssl_key_path
-  $ssl_key_pk8_path                   = $puppetdb::ssl_key_pk8_path
-  $ssl_listen_address                 = $puppetdb::ssl_listen_address
-  $ssl_listen_port                    = $puppetdb::ssl_listen_port
-  $ssl_protocols                      = $puppetdb::ssl_protocols
-  $ssl_set_cert_paths                 = $puppetdb::ssl_set_cert_paths
-  $store_usage                        = $puppetdb::store_usage
-  $temp_usage                         = $puppetdb::temp_usage
-  $vardir                             = $puppetdb::vardir
+# @param automatic_dlo_cleanup
+# @param cleanup_timer_interval
+# @param database
+# @param database_host
+# @param database_name
+# @param database_port
+# @param dlo_max_age
+# @param java_args
+# @param java_bin
+# @param manage_database
+# @param manage_firewall
+# @param merge_default_java_args
+# @param node_purge_ttl
+# @param node_ttl
+# @param postgresql_ssl_on
+# @param puppetdb_group
+# @param puppetdb_initconf
+# @param puppetdb_package
+# @param puppetdb_service
+# @param puppetdb_service_status
+# @param puppetdb_user
+# @param read_database
+# @param read_database_host
+# @param read_database_name
+# @param read_database_port
+# @param report_ttl
+# @param ssl_ca_cert
+# @param ssl_ca_cert_path
+# @param ssl_cert
+# @param ssl_cert_path
+# @param ssl_deploy_certs
+# @param ssl_dir
+# @param ssl_key
+# @param ssl_key_path
+# @param ssl_key_pk8_path
+# @param vardir
+#
+class puppetdb::server (
+  Boolean                        $automatic_dlo_cleanup             = true,
+  String                         $cleanup_timer_interval            = "*-*-* ${fqdn_rand(24)}:${fqdn_rand(60)}:00",
+  String                         $database                          = 'postgres',
+  Stdlib::Host                   $database_host                     = 'localhost',
+  String                         $database_name                     = 'puppetdb',
+  Stdlib::Port                   $database_port                     = 5432,
+  Integer                        $dlo_max_age                       = 90,
+  Optional[String]               $java_args                         = undef,
+  Optional[Stdlib::Absolutepath] $java_bin                          = undef,
+  Boolean                        $manage_database                   = true,
+  Boolean                        $manage_firewall                   = false,
+  Boolean                        $merge_default_java_args           = true,
+  String                         $node_purge_ttl                    = '14d',
+  String                         $node_ttl                          = '7d',
+  Boolean                        $postgresql_ssl_on                 = false,
+  String                         $puppetdb_group                    = $puppetdb::params::puppetdb_group,
+  Stdlib::Absolutepath           $puppetdb_initconf                 = $puppetdb::params::puppetdb_initconf,
+  String                         $puppetdb_package                  = 'puppetdb',
+  String                         $puppetdb_service                  = 'puppetdb',
+  Enum['true','false','running','stopped']  $puppetdb_service_status  = 'running',
+  String                         $puppetdb_user                     = $puppetdb::params::puppetdb_user,
+  Optional[String]               $read_database_host                = undef,
+  String                         $read_database_name                = 'puppetdb',
+  Stdlib::Port                   $read_database_port                = 5432,
+  String                         $read_database                     = 'postgres',
+  String                         $report_ttl                        = '14d',
+  Stdlib::Absolutepath           $ssl_ca_cert_path                  = $puppetdb::params::ssl_ca_cert_path,
+  Optional[String]               $ssl_ca_cert                       = undef,
+  Stdlib::Absolutepath           $ssl_cert_path                     = $puppetdb::params::ssl_cert_path,
+  Optional[String]               $ssl_cert                          = undef,
+  Boolean                        $ssl_deploy_certs                  = false,
+  Stdlib::Absolutepath           $ssl_dir                           = $puppetdb::params::ssl_dir,
+  Stdlib::Absolutepath           $ssl_key_path                      = $puppetdb::params::ssl_key_path,
+  Stdlib::Absolutepath           $ssl_key_pk8_path                  = $puppetdb::params::ssl_key_pk8_path,
+  Optional[String]               $ssl_key                           = undef,
+  Stdlib::Absolutepath           $vardir                            = $puppetdb::params::vardir,
+  #$certificate_whitelist              = $puppetdb::certificate_whitelist,
+  #$certificate_whitelist_file         = $puppetdb::certificate_whitelist_file,
+  #$cipher_suites                      = $puppetdb::cipher_suites,
+  #$command_threads                    = $puppetdb::command_threads,
+  #$concurrent_writes                  = $puppetdb::concurrent_writes,
+  #$confdir                            = $puppetdb::confdir,
+  #$conn_keep_alive                    = $puppetdb::conn_keep_alive,
+  #$conn_lifetime                      = $puppetdb::conn_lifetime,
+  #$conn_max_age                       = $puppetdb::conn_max_age,
+  #$database_embedded_path             = $puppetdb::database_embedded_path,
+  #$database_max_pool_size             = $puppetdb::database_max_pool_size,
+  #$database_password                  = $puppetdb::database_password,
+  #$database_username                  = $puppetdb::database_username,
+  #$database_validate                  = $puppetdb::database_validate,
+  #$disable_cleartext                  = $puppetdb::disable_cleartext,
+  #$disable_ssl                        = $puppetdb::disable_ssl,
+  #$disable_update_checking            = $puppetdb::disable_update_checking,
+  #$facts_blacklist                    = $puppetdb::facts_blacklist,
+  #$gc_interval                        = $puppetdb::gc_interval,
+  #$jdbc_ssl_properties                = $puppetdb::jdbc_ssl_properties,
+  #$listen_address                     = $puppetdb::listen_address,
+  #$listen_port                        = $puppetdb::listen_port,
+  #$log_slow_statements                = $puppetdb::log_slow_statements,
+  #$manage_db_password                 = $puppetdb::manage_db_password,
+  #$manage_read_db_password            = $puppetdb::manage_read_db_password,
+  #$max_threads                        = $puppetdb::max_threads,
+  #$migrate                            = $puppetdb::migrate,
+  #$node_purge_gc_batch_limit          = $puppetdb::node_purge_gc_batch_limit,
+  #$open_listen_port                   = $puppetdb::open_listen_port,
+  #$open_ssl_listen_port               = $puppetdb::open_ssl_listen_port,
+  #$read_conn_keep_alive               = $puppetdb::read_conn_keep_alive,
+  #$read_conn_lifetime                 = $puppetdb::read_conn_lifetime,
+  #$read_conn_max_age                  = $puppetdb::read_conn_max_age,
+  #$read_database_jdbc_ssl_properties  = $puppetdb::read_database_jdbc_ssl_properties,
+  #$read_database_max_pool_size        = $puppetdb::read_database_max_pool_size,
+  #$read_database_password             = $puppetdb::read_database_password,
+  #$read_database_username             = $puppetdb::read_database_username,
+  #$read_database_validate             = $puppetdb::read_database_validate,
+  #$read_log_slow_statements           = $puppetdb::read_log_slow_statements,
+  #$ssl_listen_address                 = $puppetdb::ssl_listen_address,
+  #$ssl_listen_port                    = $puppetdb::ssl_listen_port,
+  #$ssl_protocols                      = $puppetdb::ssl_protocols,
+  #$ssl_set_cert_paths                 = $puppetdb::ssl_set_cert_paths,
+  #$store_usage                        = $puppetdb::store_usage,
+  #$temp_usage                         = $puppetdb::temp_usage,
+) {
+  # Debug params
+  $debug_server = @("EOC"/)
+    \n
+      Puppetdb::Server params
+
+                            automatic_dlo_cleanup: ${automatic_dlo_cleanup}
+                           cleanup_timer_interval: ${cleanup_timer_interval}
+                                         database: ${database}
+                                    database_host: ${database_host}
+                                    database_name: ${database_name}
+                                    database_port: ${database_port}
+                                      dlo_max_age: ${dlo_max_age}
+                                        java_args: ${java_args}
+                                         java_bin: ${java_bin}
+                                  manage_database: ${manage_database}
+                                  manage_firewall: ${manage_firewall}
+                          merge_default_java_args: ${merge_default_java_args}
+                                   node_purge_ttl: ${node_purge_ttl}
+                                         node_ttl: ${node_ttl}
+                                postgresql_ssl_on: ${postgresql_ssl_on}
+                                   puppetdb_group: ${puppetdb_group}
+                                puppetdb_initconf: ${puppetdb_initconf}
+                                 puppetdb_package: ${puppetdb_package}
+                                 puppetdb_service: ${puppetdb_service}
+                          puppetdb_service_status: ${puppetdb_service_status}
+                                    puppetdb_user: ${puppetdb_user}
+                               read_database_host: ${read_database_host}
+                               read_database_name: ${read_database_name}
+                               read_database_port: ${read_database_port}
+                                    read_database: ${read_database}
+                                       report_ttl: ${report_ttl}
+                                 ssl_ca_cert_path: ${ssl_ca_cert_path}
+                                      ssl_ca_cert: ${ssl_ca_cert}
+                                    ssl_cert_path: ${ssl_cert_path}
+                                         ssl_cert: ${ssl_cert}
+                                 ssl_deploy_certs: ${ssl_deploy_certs}
+                                          ssl_dir: ${ssl_dir}
+                                     ssl_key_path: ${ssl_key_path}
+                                 ssl_key_pk8_path: ${ssl_key_pk8_path}
+                                          ssl_key: ${ssl_key}
+                                           vardir: ${vardir}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_server_firewall: ${debug_server}": }
 
   # Apply necessary suffix if zero is specified.
   # Can we drop this in the next major release?

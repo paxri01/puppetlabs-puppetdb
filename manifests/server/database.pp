@@ -36,7 +36,7 @@ class puppetdb::server::database (
   # Debug params
   $debug_database = @("EOC"/)
     \n
-      puppetdb::server::database params
+      Puppetdb::Server::Database params
 
                                           confdir: ${confdir}
                                   conn_keep_alive: ${conn_keep_alive}

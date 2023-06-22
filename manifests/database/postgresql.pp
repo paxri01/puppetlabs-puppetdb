@@ -1,25 +1,102 @@
 # @summary Class for creating the PuppetDB postgresql database. See README.md
 #   for more information.
 #
-class puppetdb::database::postgresql {
-  $database_name               = $puppetdb::database_name
-  $database_password           = $puppetdb::database_password
-  $database_port               = $puppetdb::database_port
-  $database_username           = $puppetdb::database_username
-  $listen_addresses            = $puppetdb::database_listen_address
-  $manage_database             = $puppetdb::manage_database
-  $manage_dnf_module           = $puppetdb::manage_dnf_module
-  $manage_package_repo         = $puppetdb::manage_package_repo
-  $manage_server               = $puppetdb::manage_dbserver
-  $postgres_version            = $puppetdb::postgres_version
-  $postgresql_ssl_ca_cert_path = $puppetdb::postgresql_ssl_ca_cert_path
-  $postgresql_ssl_cert_path    = $puppetdb::postgresql_ssl_cert_path
-  $postgresql_ssl_key_path     = $puppetdb::postgresql_ssl_key_path
-  $postgresql_ssl_on           = $puppetdb::postgresql_ssl_on
-  $puppetdb_server             = $puppetdb::puppetdb_server
-  $read_database_host          = $puppetdb::read_database_host
-  $read_database_password      = $puppetdb::read_database_password
-  $read_database_username      = $puppetdb::read_database_username
+# @param database_name
+#   The name of the database instance to connect to. Defaults to 'puppetdb', ignored
+#   for 'embedded' database.
+# @param database_password
+#   The password for the database user. Defaults to 'puppetdb', ignored for 'embedded' database.
+# @param database_port
+#   The port that the database server listens on. Defaults to '5432', ignored for
+#   'embedded' database.
+# @param database_username
+#   The name of the database user to connect as. Defaults to 'puppetdb', ignored for
+#   'embedded' database.
+# @param listen_addresses
+#   The address that the web server should bind to for HTTP requests. Defaults to
+#   'localhost'. Set to '0.0.0.0' to listen on all addresses.
+# @param manage_database
+#   If true, the PostgreSQL database will be managed by this module. Defaults to 'true'.
+# @param manage_dnf_module
+#   If 'true', enable specified postgresql version appstream for EL 8 systems. Also override
+#   $server_package_name within postgresql module.  Defaults to false.
+# @param manage_package_repo
+#   If 'true', the official postgresql.org repo will be added and postgres won't be installed
+#   from the regular repository. Defaults to 'true'.
+# @param manage_server
+#   Conditionally manages the PostgreSQL server via 'postgresql::server'. Defaults to 'true'.
+#   If set to 'false', this class will create the database and user via 'postgresql::server::db'
+#   but not attempt to install or manage the server itself.
+# @param postgres_version
+#   If the postgresql.org repo is installed, you can install several versions of postgres.
+#   Defaults to '9.6' in module version 6.0+ and '9.4' in older versions.
+# @param postgresql_ssl_ca_cert_path
+# @param postgresql_ssl_cert_path
+# @param postgresql_ssl_key_path
+# @param postgresql_ssl_on
+# @param puppetdb_server
+#   The dns name or ip of the PuppetDB server. Defaults to the hostname of the current node,
+#   i.e. '$::fqdn'.
+# @param read_database_host
+#   *This parameter must be set to use another PuppetDB instance for queries.*
+#
+#   The hostname or IP address of the read database server. If set to 'undef', and
+#   'manage_database' is set to 'true', it will use the value of the 'database_host'
+#   parameter. This option is supported in PuppetDB >= 1.6.
+# @param read_database_password
+#   The password for the read database user. Defaults to 'puppetdb-read'. This option is
+#   supported in PuppetDB >= 1.6.
+# @param read_database_username
+#   The name of the read database user to connect as. Defaults to 'puppetdb-read'.
+#   This option is supported in PuppetDB >= 1.6.
+#
+class puppetdb::database::postgresql (
+  String                 $database_name                = 'puppetdb',
+  String                 $database_password            = 'puppetdb',
+  Stdlib::Port           $database_port                = 5432,
+  String                 $database_username            = 'puppetdb',
+  Stdlib::Host           $listen_addresses             = 'localhost',
+  Boolean                $manage_database              = true,
+  Boolean                $manage_dnf_module            = $puppetdb::params::manage_dnf_module,
+  Boolean                $manage_package_repo          = true,
+  Boolean                $manage_server                = true,
+  String                 $postgres_version             = $puppetdb::params::postgres_version,
+  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::params::postgresql_ssl_ca_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::params::postgresql_ssl_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::params::postgresql_ssl_key_path,
+  Boolean                $postgresql_ssl_on            = false,
+  Stdlib::Host           $puppetdb_server              = fact('networking.fqdn'),
+  Optional[String]       $read_database_host           = undef,
+  String                 $read_database_password       = 'puppetdb-read',
+  String                 $read_database_username       = 'puppetdb-read',
+) {
+  # Debug params
+  $debug_postgresql = @("EOC"/)
+    \n
+      Puppetdb::Database::Postgresql params
+
+                                    database_name: ${database_name}
+                                database_password: ${database_password}
+                                    database_port: ${database_port}
+                                database_username: ${database_username}
+                                 listen_addresses: ${listen_addresses}
+                                  manage_database: ${manage_database}
+                                manage_dnf_module: ${manage_dnf_module}
+                              manage_package_repo: ${manage_package_repo}
+                                    manage_server: ${manage_server}
+                                 postgres_version: ${postgres_version}
+                      postgresql_ssl_ca_cert_path: ${postgresql_ssl_ca_cert_path}
+                         postgresql_ssl_cert_path: ${postgresql_ssl_cert_path}
+                          postgresql_ssl_key_path: ${postgresql_ssl_key_path}
+                                postgresql_ssl_on: ${postgresql_ssl_on}
+                                  puppetdb_server: ${puppetdb_server}
+                               read_database_host: ${read_database_host}
+                           read_database_password: ${read_database_password}
+                           read_database_username: ${read_database_username}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  notify { "DEBUG_database_postgresql: ${debug_postgresql}": }
 
   if $manage_server {
     class { 'postgresql::globals':

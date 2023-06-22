@@ -1,0 +1,16 @@
+Gemfile:
+  required:
+    ':system_tests':
+      #- gem: 'puppet-module-posix-system-r#{minor_version}'
+      - gem: 'puppet-module-posix-system-r'
+        platforms: ruby
+      #- gem: 'puppet-module-win-system-r#{minor_version}'
+      - gem: 'puppet-module-win-system-r'
+        platforms:
+          - mswin
+          - mingw
+          - x64_mingw
+      - gem: 'nokogiri'
+        platforms: ruby
+      #- gem: 'serverspec'
+      #  platforms: ruby
