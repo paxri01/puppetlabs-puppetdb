@@ -27,7 +27,7 @@ class puppetdb::master::puppetdb_conf (
   # Debug params
   $debug_puppetdb_conf = @("EOC"/)
     \n
-      puppetdb::master::puppetdb_conf params
+      Puppetdb::Master::Puppetdb_conf params
 
                                    puppet_confdir: ${puppet_confdir}
                                            server: ${server}

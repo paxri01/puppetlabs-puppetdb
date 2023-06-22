@@ -15,12 +15,14 @@ class puppetdb::master::storeconfigs (
   # Debug params
   $debug_storeconfigs = @("EOC"/)
     \n
-    puppetdb::master::storeconfigs
-      puppet_conf: ${puppet_conf}
-       masterless: ${masterless}
-         enable: ${enable}
+      Puppetdb::Master::Storeconfigs
+
+                                      puppet_conf: ${puppet_conf}
+                                       masterless: ${masterless}
+                                           enable: ${enable}
 
     | EOC
+  # Uncomment the following resource to display values for all parameters.
   notify { "DEBUG_master_storeconfigs: ${debug_storeconfigs}": }
 
   if $masterless {

@@ -14,12 +14,14 @@ class puppetdb::master::routes (
   # Debug params
   $debug_routes = @("EOC"/)
     \n
-    puppetdb::master::routes params
-      puppet_confdir: ${puppet_confdir}
-          masterless: ${masterless}
-              routes: ${routes}
+      Puppetdb::Master::Routes params
+
+                                   puppet_confdir: ${puppet_confdir}
+                                       masterless: ${masterless}
+                                           routes: ${routes}
 
     | EOC
+  # Uncomment the following resource to display values for all parameters.
   notify { "DEBUG_master_routes: ${debug_routes}": }
 
   if $masterless {

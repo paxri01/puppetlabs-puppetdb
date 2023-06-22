@@ -14,13 +14,14 @@ class puppetdb::master::report_processor (
   # Debug params
   $debug_report_processor = @("EOC"/)
     \n
-    puppetdb::master::report_processor params
-      puppet_conf: ${puppet_conf}
-       masterless: ${masterless}
-           enable: ${enable}
+      Puppetdb::Master::Report_processor params
+
+                                      puppet_conf: ${puppet_conf}
+                                       masterless: ${masterless}
+                                           enable: ${enable}
 
     | EOC
-
+  # Uncomment the following resource to display values for all parameters.
   notify { "DEBUG_master_report_processor: ${debug_report_processor}": }
 
   if $masterless {
