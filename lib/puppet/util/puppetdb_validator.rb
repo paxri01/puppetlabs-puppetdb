@@ -63,6 +63,6 @@ class Puppet::Util::PuppetdbValidator
     end
   rescue StandardError => e
     log_error(e.message)
-    return false
+    # return false
   end
 end

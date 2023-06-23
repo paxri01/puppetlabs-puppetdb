@@ -3,9 +3,9 @@
 # @api private
 #
 define puppetdb::database::postgresql_ssl_rules (
-  String    $database_name      = 'puppetdb',
-  String    $database_username  = 'puppetdb',
-  String    $puppetdb_server    = $facts['networking']['fqdn'],
+  String    $database_name      = $puppetdb::database_name,
+  String    $database_username  = $puppetdb::database_username,
+  String    $puppetdb_server    = $puppetdb::puppetdb_server,
 ) {
   # Debug params
   $debug_ssl_rules = @("EOC"/)
@@ -18,7 +18,7 @@ define puppetdb::database::postgresql_ssl_rules (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_database_read_grant: ${debug_ssl_rules}": }
+  #notify { "DEBUG_database_read_grant: ${debug_ssl_rules}": }
 
   $identity_map_key = "${database_name}-${database_username}-map"
 

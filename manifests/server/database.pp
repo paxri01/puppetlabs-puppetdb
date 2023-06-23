@@ -3,35 +3,35 @@
 # @api private
 #
 class puppetdb::server::database (
-  Stdlib::Absolutepath           $confdir                           = $puppetdb::params::confdir,
-  String                         $conn_keep_alive                   = '45',
-  String                         $conn_lifetime                     = '0',
-  String                         $conn_max_age                      = '60',
-  String                         $database                          = 'postgres',
-  Stdlib::Absolutepath           $database_embedded_path            = $puppetdb::params::database_embedded_path,
-  Stdlib::Host                   $database_host                     = 'localhost',
-  Optional[String]               $database_max_pool_size            = undef,
-  String                         $database_name                     = 'puppetdb',
-  String                         $database_password                 = 'puppetdb',
-  Stdlib::Port                   $database_port                     = 5432,
-  String                         $database_username                 = 'puppetdb',
-  Boolean                        $database_validate                 = true,
-  Optional[Array]                $facts_blacklist                   = undef,
-  String                         $gc_interval                       = '60',
-  Optional[String]               $jdbc_ssl_properties               = undef,
-  String                         $log_slow_statements               = '10',
-  Boolean                        $manage_db_password                = true,
-  Boolean                        $migrate                           = true,
-  String                         $node_purge_gc_batch_limit         = '25',
-  String                         $node_purge_ttl                    = '14d',
-  String                         $node_ttl                          = '7d',
-  Boolean                        $postgresql_ssl_on                 = false,
-  String                         $puppetdb_group                    = $puppetdb::params::puppetdb_group,
-  String                         $puppetdb_user                     = $puppetdb::params::puppetdb_user,
-  String                         $report_ttl                        = '14d',
-  Stdlib::Absolutepath           $ssl_ca_cert_path                  = $puppetdb::params::ssl_ca_cert_path,
-  Stdlib::Absolutepath           $ssl_cert_path                     = $puppetdb::params::ssl_cert_path,
-  Stdlib::Absolutepath           $ssl_key_pk8_path                  = $puppetdb::params::ssl_key_pk8_path,
+  Stdlib::Absolutepath   $confdir                    = $puppetdb::confdir,
+  String                 $conn_keep_alive            = $puppetdb::conn_keep_alive,
+  String                 $conn_lifetime              = $puppetdb::conn_lifetime,
+  String                 $conn_max_age               = $puppetdb::conn_max_age,
+  String                 $database                   = $puppetdb::database,
+  Stdlib::Absolutepath   $database_embedded_path     = $puppetdb::database_embedded_path,
+  Stdlib::Host           $database_host              = $puppetdb::database_host,
+  Optional[String]       $database_max_pool_size     = $puppetdb::database_max_pool_size,
+  String                 $database_name              = $puppetdb::database_name,
+  String                 $database_password          = $puppetdb::database_password,
+  Stdlib::Port           $database_port              = $puppetdb::database_port,
+  String                 $database_username          = $puppetdb::database_username,
+  Boolean                $database_validate          = $puppetdb::database_validate,
+  Optional[Array]        $facts_blacklist            = $puppetdb::facts_blacklist,
+  String                 $gc_interval                = $puppetdb::gc_interval,
+  Optional[String]       $jdbc_ssl_properties        = $puppetdb::jdbc_ssl_properties,
+  String                 $log_slow_statements        = $puppetdb::log_slow_statements,
+  Boolean                $manage_db_password         = $puppetdb::manage_db_password,
+  Boolean                $migrate                    = $puppetdb::migrate,
+  String                 $node_purge_gc_batch_limit  = $puppetdb::node_purge_gc_batch_limit,
+  String                 $node_purge_ttl             = $puppetdb::node_purge_ttl,
+  String                 $node_ttl                   = $puppetdb::node_ttl,
+  Boolean                $postgresql_ssl_on          = $puppetdb::postgresql_ssl_on,
+  String                 $puppetdb_group             = $puppetdb::puppetdb_group,
+  String                 $puppetdb_user              = $puppetdb::puppetdb_user,
+  String                 $report_ttl                 = $puppetdb::report_ttl,
+  Stdlib::Absolutepath   $ssl_ca_cert_path           = $puppetdb::ssl_ca_cert_path,
+  Stdlib::Absolutepath   $ssl_cert_path              = $puppetdb::ssl_cert_path,
+  Stdlib::Absolutepath   $ssl_key_pk8_path           = $puppetdb::ssl_key_pk8_path,
 ) inherits puppetdb::params {
   # Debug params
   $debug_database = @("EOC"/)
@@ -70,7 +70,7 @@ class puppetdb::server::database (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_server_database: ${debug_database}": }
+  #notify { "DEBUG_server_database: ${debug_database}": }
 
   if str2bool($database_validate) {
     # Validate the database connection.  If we can't connect, we want to fail

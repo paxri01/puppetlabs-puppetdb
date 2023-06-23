@@ -16,10 +16,10 @@
 #   [String] The value of $_database_password in app_database.
 #
 define puppetdb::database::read_only_user (
-  String                    $database_name           = 'puppetdb',
-  String                    $database_owner          = 'puppetdb',
-  String                    $read_database_username  = 'puppetdb-read',
-  Variant[String, Boolean]  $password_hash           = false,
+  String                    $database_name           = $puppetdb::database_name,
+  String                    $database_owner          = $puppetdb::database_owner,
+  String                    $read_database_username  = $puppetdb::read_database_username,
+  Variant[String, Boolean]  $password_hash           = $puppetdb::read_database_password,
 ) {
   # Debug params
   $debug_read_only_user = @("EOC"/)
@@ -33,7 +33,7 @@ define puppetdb::database::read_only_user (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_database_default_read_grant: ${debug_read_only_user}": }
+  #notify { "DEBUG_database_default_read_grant: ${debug_read_only_user}": }
 
   postgresql::server::role { $read_database_username:
     password_hash => $password_hash,

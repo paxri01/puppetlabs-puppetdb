@@ -3,14 +3,6 @@ require 'beaker-puppet'
 require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
 
-def use_puppet4?
-  (ENV['PUPPET_INSTALL_VERSION'] =~ %r{^2016}) ? true : false
-end
-
-def use_puppet5?
-  (ENV['BEAKER_PUPPET_COLLECTION'] =~ %r{^puppet5}) ? true : false
-end
-
 def use_puppet6?
   (ENV['BEAKER_PUPPET_COLLECTION'] =~ %r{^puppet6}) ? true : false
 end

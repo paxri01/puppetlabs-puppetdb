@@ -24,7 +24,7 @@ class puppetdb::server::puppetdb (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_srv_puppetdb: ${debug_puppetdb}": }
+  #notify { "DEBUG_srv_puppetdb: ${debug_puppetdb}": }
 
   $puppetdb_ini = "${confdir}/puppetdb.ini"
 

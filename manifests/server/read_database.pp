@@ -3,28 +3,28 @@
 # @api private
 #
 class puppetdb::server::read_database (
-  Stdlib::Absolutepath     $confdir                 = $puppetdb::params::confdir,
-  String                   $conn_keep_alive         = '45',
-  String                   $conn_lifetime           = '0',
-  String                   $conn_max_age            = '60',
-  Optional[String]         $database_max_pool_size  = undef,
-  Boolean                  $database_validate       = true,
-  Optional[String]         $jdbc_ssl_properties     = undef,
-  String                   $log_slow_statements     = '10',
-  Boolean                  $manage_db_password      = true,
-  Boolean                  $postgresql_ssl_on       = false,
-  String                   $puppetdb_group          = $puppetdb::params::puppetdb_group,
-  String                   $puppetdb_user           = $puppetdb::params::puppetdb_user,
-  String                   $read_database           = 'postgres',
-  Optional[String]         $read_database_host      = undef,
-  String                   $read_database_name      = 'puppetdb',
-  String                   $read_database_password  = 'puppetdb-read',
-  Stdlib::Port             $read_database_port      = 5432,
-  String                   $read_database_username  = 'puppetdb-read',
-  Stdlib::Absolutepath     $ssl_ca_cert_path        = $puppetdb::params::ssl_ca_cert_path,
-  Stdlib::Absolutepath     $ssl_cert_path           = $puppetdb::params::ssl_cert_path,
-  Stdlib::Absolutepath     $ssl_key_pk8_path        = $puppetdb::params::ssl_key_pk8_path,
-) inherits puppetdb::params {
+  Stdlib::Absolutepath   $confdir                 = $puppetdb::confdir,
+  String                 $conn_keep_alive         = $puppetdb::conn_keep_alive,
+  String                 $conn_lifetime           = $puppetdb::conn_lifetime,
+  String                 $conn_max_age            = $puppetdb::conn_max_age,
+  Optional[String]       $database_max_pool_size  = $puppetdb::database_max_pool_size,
+  Boolean                $database_validate       = $puppetdb::database_validate,
+  Optional[String]       $jdbc_ssl_properties     = $puppetdb::jdbc_ssl_properties,
+  String                 $log_slow_statements     = $puppetdb::log_slow_statements,
+  Boolean                $manage_db_password      = $puppetdb::manage_db_password,
+  Boolean                $postgresql_ssl_on       = $puppetdb::postgresql_ssl_on,
+  String                 $puppetdb_group          = $puppetdb::puppetdb_group,
+  String                 $puppetdb_user           = $puppetdb::puppetdb_user,
+  String                 $read_database           = $puppetdb::read_database,
+  Stdlib::Host           $read_database_host      = $puppetdb::read_database_host,
+  String                 $read_database_name      = $puppetdb::read_database_name,
+  String                 $read_database_password  = $puppetdb::read_database_password,
+  Stdlib::Port           $read_database_port      = $puppetdb::read_database_port,
+  String                 $read_database_username  = $puppetdb::read_database_username,
+  Stdlib::Absolutepath   $ssl_ca_cert_path        = $puppetdb::ssl_ca_cert_path,
+  Stdlib::Absolutepath   $ssl_cert_path           = $puppetdb::ssl_cert_path,
+  Stdlib::Absolutepath   $ssl_key_pk8_path        = $puppetdb::ssl_key_pk8_path,
+) {
   # Debug code
   $debug_read_database = @("EOC"/)
     \n
@@ -56,7 +56,7 @@ class puppetdb::server::read_database (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_server_read_database: ${debug_read_database}": }
+  #notify { "DEBUG_server_read_database: ${debug_read_database}": }
 
   if $read_database_host != undef {
     if str2bool($database_validate) {

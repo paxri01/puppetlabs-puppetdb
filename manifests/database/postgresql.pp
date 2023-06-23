@@ -51,24 +51,24 @@
 #   This option is supported in PuppetDB >= 1.6.
 #
 class puppetdb::database::postgresql (
-  String                 $database_name                = 'puppetdb',
-  String                 $database_password            = 'puppetdb',
-  Stdlib::Port           $database_port                = 5432,
-  String                 $database_username            = 'puppetdb',
-  Stdlib::Host           $listen_addresses             = 'localhost',
-  Boolean                $manage_database              = true,
-  Boolean                $manage_dnf_module            = $puppetdb::params::manage_dnf_module,
-  Boolean                $manage_package_repo          = true,
-  Boolean                $manage_server                = true,
-  String                 $postgres_version             = $puppetdb::params::postgres_version,
-  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::params::postgresql_ssl_ca_cert_path,
-  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::params::postgresql_ssl_cert_path,
-  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::params::postgresql_ssl_key_path,
-  Boolean                $postgresql_ssl_on            = false,
-  Stdlib::Host           $puppetdb_server              = fact('networking.fqdn'),
-  Optional[String]       $read_database_host           = undef,
-  String                 $read_database_password       = 'puppetdb-read',
-  String                 $read_database_username       = 'puppetdb-read',
+  String                 $database_name                = $puppetdb::database_name,
+  String                 $database_password            = $puppetdb::database_password,
+  Stdlib::Port           $database_port                = $puppetdb::database_port,
+  String                 $database_username            = $puppetdb::database_username,
+  Stdlib::Host           $listen_addresses             = $puppetdb::listen_address,
+  Boolean                $manage_database              = $puppetdb::manage_database,
+  Boolean                $manage_dnf_module            = $puppetdb::manage_dnf_module,
+  Boolean                $manage_package_repo          = $puppetdb::manage_package_repo,
+  Boolean                $manage_server                = $puppetdb::manage_server,
+  String                 $postgres_version             = $puppetdb::postgres_version,
+  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::postgresql_ssl_ca_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::postgresql_ssl_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::postgresql_ssl_key_path,
+  Boolean                $postgresql_ssl_on            = $puppetdb::postgresql_ssl_on,
+  Stdlib::Host           $puppetdb_server              = $puppetdb::puppetdb_server,
+  Optional[String]       $read_database_host           = $puppetdb::read_database_host,
+  String                 $read_database_password       = $puppetdb::read_database_password,
+  String                 $read_database_username       = $puppetdb::read_database_username,
 ) {
   # Debug params
   $debug_postgresql = @("EOC"/)
@@ -96,7 +96,7 @@ class puppetdb::database::postgresql (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_database_postgresql: ${debug_postgresql}": }
+  #notify { "DEBUG_database_postgresql: ${debug_postgresql}": }
 
   if $manage_server {
     class { 'postgresql::globals':
@@ -123,7 +123,9 @@ class puppetdb::database::postgresql (
     # configure PostgreSQL communication with Puppet Agent SSL certificates if
     # postgresql_ssl_on is set to true
     if $postgresql_ssl_on {
-      class { 'puppetdb::database::ssl_configuration': }
+      class { 'puppetdb::database::ssl_configuration':
+        create_read_user_rule => $create_read_user_rule,
+      }
     }
 
     # Only install pg_trgm extension, if database it is actually managed by the module

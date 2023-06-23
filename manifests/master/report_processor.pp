@@ -1,15 +1,13 @@
 # @summary Manage the installation of the report processor on the master.
 #
+# @api private
+#
 # @see README.md for more details.
 #
-# @param puppet_conf
-# @param masterless
-# @param enable
-#
 class puppetdb::master::report_processor (
-  Stdlib::Absolutepath  $puppet_conf   = $puppetdb::params::puppet_conf,
-  Boolean               $masterless    = false,
-  Boolean               $enable        = false,
+  Stdlib::Absolutepath  $puppet_conf   = $puppetdb::puppet_conf,
+  Boolean               $masterless    = $puppetdb::masterless,
+  Boolean               $enable        = $puppetdb::enable_reports,
 ) {
   # Debug params
   $debug_report_processor = @("EOC"/)
@@ -22,7 +20,7 @@ class puppetdb::master::report_processor (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_master_report_processor: ${debug_report_processor}": }
+  #notify { "DEBUG_master_report_processor: ${debug_report_processor}": }
 
   if $masterless {
     $puppet_conf_section = 'main'

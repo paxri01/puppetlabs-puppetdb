@@ -28,14 +28,14 @@
 #
 class puppetdb::database::ssl_configuration (
   Boolean                $create_read_user_rule        = undef,
-  String                 $database_name                = 'puppetdb',
-  String                 $database_username            = 'puppetdb',
-  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::params::postgresql_ssl_ca_cert_path,
-  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::params::postgresql_ssl_cert_path,
-  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::params::postgresql_ssl_key_path,
-  Stdlib::Host           $puppetdb_server              = fact('networking.fqdn'),
-  Optional[String]       $read_database_host           = undef,
-  String                 $read_database_username       = 'puppetdb-read',
+  String                 $database_name                = $puppetdb::database_name,
+  String                 $database_username            = $puppetdb::database_username,
+  Stdlib::Absolutepath   $postgresql_ssl_ca_cert_path  = $puppetdb::postgresql_ssl_ca_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_cert_path     = $puppetdb::postgresql_ssl_cert_path,
+  Stdlib::Absolutepath   $postgresql_ssl_key_path      = $puppetdb::postgresql_ssl_key_path,
+  Stdlib::Host           $puppetdb_server              = $puppetdb::puppetdb_server,
+  Optional[String]       $read_database_host           = $puppetdb::read_database_host,
+  String                 $read_database_username       = $puppetdb::read_database_username,
 ) {
   # Debug params
   $debug_ssl_configuration = @("EOC"/)
@@ -54,7 +54,7 @@ class puppetdb::database::ssl_configuration (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_database_postgresql: ${debug_ssl_configuration}": }
+  #notify { "DEBUG_database_postgresql: ${debug_ssl_configuration}": }
 
   File {
     ensure  => 'present',

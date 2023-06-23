@@ -12,7 +12,7 @@ class puppetdb::params inherits puppetdb::globals {
     $manage_pg_repo            = false
   }
 
-  if fact('os.family') == 'RedHat' and fact('os.release.major') == '8' {
+  if fact('os.family') == 'RedHat' and versioncmp(fact('os.release.major'), '8') >= 0 {
     $manage_dnf_module         = true
   } else {
     $manage_dnf_module         = false

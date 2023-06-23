@@ -3,10 +3,10 @@
 # @api private
 #
 class puppetdb::server::global (
-  Stdlib::Absolutepath    $confdir         = $puppetdb::params::confdir,
-  String                  $puppetdb_group  = $puppetdb::params::puppetdb_group,
-  String                  $puppetdb_user   = $puppetdb::params::puppetdb_user,
-  Stdlib::Absolutepath    $vardir          = $puppetdb::params::vardir,
+  Stdlib::Absolutepath    $confdir         = $puppetdb::confdir,
+  String                  $puppetdb_group  = $puppetdb::puppetdb_group,
+  String                  $puppetdb_user   = $puppetdb::puppetdb_user,
+  Stdlib::Absolutepath    $vardir          = $puppetdb::vardir,
 ) {
   # Debug params
   $debug_global = @("EOC"/)
@@ -20,7 +20,7 @@ class puppetdb::server::global (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_server_global: ${debug_global}": }
+  #notify { "DEBUG_server_global: ${debug_global}": }
 
   $config_ini = "${confdir}/config.ini"
 

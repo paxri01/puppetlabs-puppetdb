@@ -4,10 +4,10 @@
 # @api private
 #
 define puppetdb::database::default_read_grant (
-  String    $database_name                = 'puppetdb',
-  String    $schema                       = 'public',
-  String    $database_username            = 'puppetdb',
-  String    $database_read_only_username  = 'puppetdb-read',
+  String    $database_name                = $puppetdb::database_name,
+  String    $schema                       = undef,
+  String    $database_username            = $puppetdb::database_username,
+  String    $database_read_only_username  = $puppetdb::read_database_username,
 ) {
   # Debug params
   $debug_default_read_grant = @("EOC"/)
@@ -21,7 +21,7 @@ define puppetdb::database::default_read_grant (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_database_default_read_grant: ${debug_default_read_grant}": }
+  #notify { "DEBUG_database_default_read_grant: ${debug_default_read_grant}": }
 
   postgresql_psql { "grant default select permission for ${database_read_only_username}":
     db      => $database_name,

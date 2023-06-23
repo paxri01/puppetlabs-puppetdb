@@ -1,48 +1,47 @@
 # @summary Manage puppet configuration.
 #
+# @api private
+#
 # @see README.md for more details.
 #
-# lint:ignore:parameter_documentation
 class puppetdb::master::config (
-  Boolean                        $create_puppet_service_resource    = true,
-  Boolean                        $enable_reports                    = false,
-  Boolean                        $enable_storeconfigs               = true,
-  Boolean                        $manage_config                     = true,
-  Boolean                        $manage_report_processor           = false,
-  Boolean                        $manage_routes                     = true,
-  Boolean                        $manage_storeconfigs               = true,
-  Boolean                        $masterless                        = false,
-  Stdlib::Absolutepath           $puppet_conf                       = $puppetdb::params::puppet_conf,
-  Stdlib::Absolutepath           $puppet_confdir                    = $puppetdb::params::puppet_confdir,
-  String                         $puppet_service_name               = 'puppetserver',
-  Boolean                        $puppetdb_disable_ssl              = defined(Class['puppetdb']) ? {
+  Boolean                $create_service           = $puppetdb::create_puppet_service_resource,
+  Boolean                $enable_reports           = $puppetdb::enable_reports,
+  Boolean                $enable_storeconfigs      = $puppetdb::enable_storeconfigs,
+  Boolean                $manage_config            = $puppetdb::manage_config,
+  Boolean                $manage_report_processor  = $puppetdb::manage_report_processor,
+  Boolean                $manage_routes            = $puppetdb::manage_routes,
+  Boolean                $manage_storeconfigs      = $puppetdb::manage_storeconfigs,
+  Boolean                $masterless               = $puppetdb::masterless,
+  Stdlib::Absolutepath   $puppet_conf              = $puppetdb::puppet_conf,
+  Stdlib::Absolutepath   $puppet_confdir           = $puppetdb::puppet_confdir,
+  String                 $puppet_service_name      = $puppetdb::puppet_service_name,
+  Boolean                $puppetdb_disable_ssl     = defined(Class['puppetdb']) ? {
     true    => $puppetdb::disable_ssl,
     default => false,
   },
-  Stdlib::Port                   $puppetdb_port                     = defined(Class['puppetdb']) ? {
+  Stdlib::Port           $puppetdb_port            = defined(Class['puppetdb']) ? {
     true    => $puppetdb::disable_ssl ? {
       true => 8080,
       default => 8081,
     },
     default => 8081,
   },
-  Stdlib::Host                   $puppetdb_server                   = fact('networking.fqdn'),
-  Boolean                        $puppetdb_soft_write_failure       = false,
-  Integer                        $puppetdb_startup_timeout          = 120,
-  String                         $puppetdb_version                  = 'present',
-  Boolean                        $restart_puppet                    = true,
-  Boolean                        $strict_validation                 = true,
-  String                         $terminus_package                  = $puppetdb::params::terminus_package,
-  String                         $test_url                          = '/v3/version',
-) inherits puppetdb::params {
-  # lint:endignore
-  #
+  Stdlib::Host           $puppetdb_server              = $puppetdb::puppetdb_server,
+  Boolean                $puppetdb_soft_write_failure  = $puppetdb::puppetdb_soft_write_failure,
+  Integer                $puppetdb_startup_timeout     = $puppetdb::puppetdb_startup_timeout,
+  String                 $puppetdb_version             = $puppetdb::puppetdb_version,
+  Boolean                $restart_puppet               = $puppetdb::restart_puppet,
+  Boolean                $strict_validation            = $puppetdb::strict_validataion,
+  String                 $terminus_package             = $puppetdb::terminus_package,
+  String                 $test_url                     = $puppetdb::test_url,
+) {
   # Debug params
   $debug_config = @("EOC"/)
     \n
       Puppetdb::Master::Config params
 
-                   create_puppet_service_resource: ${create_puppet_service_resource}
+                                   create_service: ${create_service}
                                    enable_reports: ${enable_reports}
                               enable_storeconfigs: ${enable_storeconfigs}
                                     manage_config: ${manage_config}
@@ -66,7 +65,7 @@ class puppetdb::master::config (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_master_config: ${debug_config}": }
+  #notify { "DEBUG_master_config: ${debug_config}": }
 
   # **WARNING**: Ugly hack to work around a yum bug with metadata parsing. This
   # should not be copied, replicated or even looked at. In short, never rename
@@ -207,10 +206,10 @@ class puppetdb::master::config (
     # We will need to restart the puppet master service if certain config
     # files are changed, so here we make sure it's in the catalog. This is
     # parse-order dependent and could prevent another part of the code from
-    # declaring the service, so set $create_puppet_service_resource to false if you
+    # declaring the service, so set $create_service to false if you
     # are absolutely sure you're declaring Service[$puppet_service_name] in
     # some other way.
-    if $create_puppet_service_resource and ! defined(Service[$puppet_service_name]) {
+    if $create_service and ! defined(Service[$puppet_service_name]) {
       service { $puppet_service_name:
         ensure => running,
         enable => true,

@@ -1,29 +1,14 @@
 # @summary Manages the routes configuration file on the master.
 #
+# @api private
+#
 # @see README.md for more details.
 #
-# @param puppet_confdir
-# @param masterless
-# @param routes
-#
 class puppetdb::master::routes (
-  Stdlib::Absolutepath     $puppet_confdir   = $puppetdb::params::puppet_confdir,
-  Boolean                  $masterless       = false,
+  Stdlib::Absolutepath     $puppet_confdir   = $puppetdb::puppet_confdir,
+  Boolean                  $masterless       = $puppetdb::masterless,
   Optional[String]         $routes           = undef,
-) inherits puppetdb::params {
-  # Debug params
-  $debug_routes = @("EOC"/)
-    \n
-      Puppetdb::Master::Routes params
-
-                                   puppet_confdir: ${puppet_confdir}
-                                       masterless: ${masterless}
-                                           routes: ${routes}
-
-    | EOC
-  # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_master_routes: ${debug_routes}": }
-
+) {
   if $masterless {
     $routes_real = {
       'apply' => {
@@ -54,6 +39,19 @@ class puppetdb::master::routes (
       },
     }
   }
+
+  # Debug params
+  $debug_routes = @("EOC"/)
+    \n
+      Puppetdb::Master::Routes params
+
+                                   puppet_confdir: ${puppet_confdir}
+                                       masterless: ${masterless}
+                                           routes: ${routes}
+
+    | EOC
+  # Uncomment the following resource to display values for all parameters.
+  #notify { "DEBUG_master_routes: ${debug_routes}": }
 
   # TODO: this will overwrite any existing routes.yaml;
   #  to handle this properly we should just be ensuring

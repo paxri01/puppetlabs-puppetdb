@@ -2,18 +2,12 @@
 #
 # @see README.md for more details.
 #
-# @param server
-#   The dns name or ip of the PuppetDB server. Defaults to the hostname of the current node,
-#   i.e. '$::fqdn'.
-# @param port
-#   The port that the PuppetDB server is running on. Defaults to '8081'.
-# @param puppet_confdir
-#   Puppet's config directory. Defaults to '/etc/puppetlabs/puppetdb'.
+# @api private
 #
 class puppetdb::master::puppetdb_conf (
-  Stdlib::Host          $server             = 'localhost',
-  Stdlib::Port          $port               = 8081,
-  Stdlib::Absolutepath  $puppet_confdir     = '/etc/puppetlabs/puppetdb',
+  Stdlib::Host          $server             = $puppetdb::puppetdb_server,
+  Stdlib::Port          $port               = $puppetdb::puppetdb_port,
+  Stdlib::Absolutepath  $puppet_confdir     = $puppetdb::puppetdb_confdir,
 ) {
   $soft_write_failure = $puppetdb::disable_ssl ? {
     true => true,
@@ -37,7 +31,7 @@ class puppetdb::master::puppetdb_conf (
 
     | EOC
   # Uncomment the following resource to display values for all parameters.
-  notify { "DEBUG_master_puppetdb_conf: ${debug_puppetdb_conf}": }
+  #notify { "DEBUG_master_puppetdb_conf: ${debug_puppetdb_conf}": }
 
   Ini_setting {
     ensure  => present,

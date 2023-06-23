@@ -162,7 +162,7 @@
 #   If true, the PostgreSQL server will be managed by this module. Defaults to 'true'.
 # @param manage_dnf_module
 #   If 'true', enable specified postgresql version appstream for EL 8 systems. Also override
-#   $server_package_name within postgresql module.  Defaults to false.
+#   $server_package_name within postgresql module. Defaults to true if EL 8+.
 # @param manage_firewall
 #   If 'true', puppet will manage your iptables rules for PuppetDB via the [puppetlabs-firewall]
 #   (https://forge.puppetlabs.com/puppetlabs/firewall) class.
