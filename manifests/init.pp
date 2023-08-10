@@ -55,12 +55,6 @@
 #   closed off.
 #
 #   If not supplied, we default to '60' minutes. This option is supported in PuppetDB >= 1.1.
-# @param create_puppet_service_resource
-#   If 'true', AND if 'restart_puppet' is true, then the module will create a service resource
-#   for 'puppet_service_name' if it has not been defined. Defaults to 'true'.  If you are
-#   already declaring the 'puppet_service_name' service resource in another part of your code,
-#   setting this to 'false' will avoid creation of that service resource by this module,
-#   avoiding potential duplicate resource errors.
 # @param database
 #   Which database backend to use; legal values are 'postgres' (default) or 'embedded'.
 #   The 'embedded' option is not supported on PuppetDB 4.0.0 or later. 'embedded' can be used
@@ -104,14 +98,6 @@
 # @param dlo_max_age
 #   This is a positive integer. It describes the amount of days you want to keep the DLO reports.
 #   The default value is 90 days.
-# @param enable_reports
-#   Ignored unless 'manage_report_processor' is 'true', in which case this setting will
-#   determine whether or not the PuppetDB report processor is enabled ('true') or disabled
-#   ('false') in the puppet.conf file.
-# @param enable_storeconfigs
-#   Ignored unless 'manage_storeconfigs' is 'true', in which case this setting will determine
-#   whether or not client configuration storage is enabled ('true') or disabled ('false') in
-#   the puppet.conf file.
 # @param facts_blacklist
 #   TODO
 # @param gc_interval
@@ -149,10 +135,6 @@
 #
 #   The default value is '10' seconds. A value of 0 will disable logging of slow queries.
 #   This option is supported in PuppetDB >= 1.1.
-# @param manage_config
-#   If 'true', the module will store values from 'puppetdb_server' and 'puppetdb_port' parameters
-#   in the PuppetDB configuration file. If 'false', an existing PuppetDB configuration file
-#   will be used to retrieve server and port values.
 # @param manage_database
 #   If true, the PostgreSQL database will be managed by this module. Defaults to 'true'.
 # @param manage_db_password
@@ -172,21 +154,10 @@
 # @param manage_read_db_password
 #   Whether or not the database password in read-database.ini will be managed by this module.
 #   Set this to 'false' if you want to set the password some other way. Defaults to 'true'
-# @param manage_report_processor
-#   If 'true', the module will manage the 'reports' field in the puppet.conf file to enable
-#   or disable the PuppetDB report processor. Defaults to 'false'.
-# @param manage_routes
-#   If 'true', the module will overwrite the Puppet master's routes file to configure it to
-#   use PuppetDB. Defaults to 'true'.
 # @param manage_server
 #   Conditionally manages the PostgreSQL server via 'postgresql::server'. Defaults to 'true'.
 #   If set to 'false', this class will create the database and user via 'postgresql::server::db'
 #   but not attempt to install or manage the server itself.
-# @param manage_storeconfigs
-#   If 'true', the module will manage the Puppet master's storeconfig settings.  Defaults
-#   to 'true'.
-# @param masterless
-#   A boolean switch to enable or disable the masterless setup of PuppetDB. Defaults to 'false'.
 # @param max_threads
 #   Jetty option to explicitly set 'max-threads'. Defaults to 'undef', so the PuppetDB-Jetty
 #   default is used.
@@ -253,12 +224,6 @@
 #   Sets whether the service should be 'running ' or 'stopped'. When set to 'stopped' the
 #   service doesn't start on boot either. Valid values are 'true', 'running', 'false',
 #   and 'stopped'.
-# @param puppetdb_soft_write_failure
-#   Boolean to fail in a soft manner if PuppetDB is not accessible for command submission
-#   Defaults to 'false'.
-# @param puppetdb_startup_timeout
-#   The maximum amount of time that the module should wait for PuppetDB to start up.  This is
-#   most important during the initial install of PuppetDB (defaults to 15 seconds).
 # @param puppetdb_user
 #   TODO
 # @param puppetdb_version
@@ -320,10 +285,6 @@
 # @param report_ttl
 #   The length of time reports should be stored before being deleted. (defaults to '14d',
 #   which is a 14-day period). This option is supported in PuppetDB >= 1.1.0.
-# @param restart_puppet
-#   If 'true', the module will restart the Puppet master when PuppetDB configuration files are
-#   changed by the module. Defaults to 'true'. If set to 'false', you must restart the service
-#   manually in order to pick up changes to the config files (other than 'puppet.conf').
 # @param ssl_ca_cert
 #   Contents of your SSL CA certificate, as a string.
 # @param ssl_ca_cert_path
@@ -357,9 +318,6 @@
 # @param store_usage
 #   The amount of disk space (in MB) to allow for persistent message storage.  Defaults to
 #   'undef', using the PuppetDB built-in default.
-# @param strict_validation
-#   If 'true', the module will fail if PuppetDB is not reachable, otherwise it will preconfigure
-#   PuppetDB without checking.
 # @param temp_usage
 #   The amount of disk space (in MB) to allow for temporary message storage.  Defaults to
 #   'undef', using the PuppetDB built-in default.
@@ -387,7 +345,7 @@ class puppetdb (
   String                         $conn_keep_alive                   = '45',
   String                         $conn_lifetime                     = '0',
   String                         $conn_max_age                      = '60',
-  Boolean                        $create_puppet_service_resource    = true,
+  #Boolean                        $create_puppet_service_resource    = true,
   Stdlib::Absolutepath           $database_embedded_path            = $puppetdb::params::database_embedded_path,
   Stdlib::Host                   $database_host                     = 'localhost',
   Stdlib::Host                   $database_listen_address           = 'localhost',
@@ -402,8 +360,8 @@ class puppetdb (
   Boolean                        $disable_ssl                       = false,
   Optional[Boolean]              $disable_update_checking           = undef,
   Integer                        $dlo_max_age                       = 90,
-  Boolean                        $enable_reports                    = false,
-  Boolean                        $enable_storeconfigs               = true,
+  #Boolean                        $enable_reports                    = false,
+  #Boolean                        $enable_storeconfigs               = true,
   Optional[Array]                $facts_blacklist                   = undef,
   String                         $gc_interval                       = '60',
   Optional[String]               $java_args                         = undef,
@@ -412,19 +370,19 @@ class puppetdb (
   Stdlib::Host                   $listen_address                    = 'localhost',
   Stdlib::Port                   $listen_port                       = 8080,
   String                         $log_slow_statements               = '10',
-  Boolean                        $manage_config                     = true,
+  #Boolean                        $manage_config                     = true,
   Boolean                        $manage_database                   = true,
   Boolean                        $manage_db_password                = true,
   Boolean                        $manage_dbserver                   = true,
   Boolean                        $manage_dnf_module                 = $puppetdb::params::manage_dnf_module,
-  Boolean                        $manage_firewall                   = true,
+  Boolean                        $manage_firewall                   = false,
   Boolean                        $manage_package_repo               = true,
   Boolean                        $manage_read_db_password           = true,
-  Boolean                        $manage_report_processor           = false,
-  Boolean                        $manage_routes                     = true,
+  #Boolean                        $manage_report_processor           = false,
+  #Boolean                        $manage_routes                     = true,
   Boolean                        $manage_server                     = true,
-  Boolean                        $manage_storeconfigs               = true,
-  Boolean                        $masterless                        = false,
+  #Boolean                        $manage_storeconfigs               = true,
+  #Boolean                        $masterless                        = $puppetdb::params::masterless,
   Optional[String]               $max_threads                       = undef,
   Boolean                        $merge_default_java_args           = true,
   Boolean                        $migrate                           = true,
@@ -447,12 +405,12 @@ class puppetdb (
   Stdlib::Absolutepath           $puppetdb_initconf                 = $puppetdb::params::puppetdb_initconf,
   String                         $puppetdb_package                  = 'puppetdb',
   Optional[Stdlib::Port]         $puppetdb_port                     = undef,
-  Stdlib::Host                   $puppetdb_server                   = fact('networking.fqdn'),
+  Stdlib::Host                   $puppetdb_server                   = $puppetdb::params::puppetdb_server,
   String                         $puppetdb_service                  = 'puppetdb',
   Enum['true','false','running','stopped']  $puppetdb_service_status  = 'running',
-  Boolean                        $puppetdb_soft_write_failure       = false,
-  Integer                        $puppetdb_startup_timeout          = 120,
-  String                         $puppetdb_version                  = 'present',
+  #Boolean                        $puppetdb_soft_write_failure       = false,
+  #Integer                        $puppetdb_startup_timeout          = 120,
+  String                         $puppetdb_version                  = $puppetdb::params::puppetdb_version,
   String                         $puppetdb_user                     = $puppetdb::params::puppetdb_user,
   String                         $read_conn_keep_alive              = '45',
   String                         $read_conn_lifetime                = '0',
@@ -468,7 +426,7 @@ class puppetdb (
   Boolean                        $read_database_validate            = true,
   String                         $read_log_slow_statements          = '10',
   String                         $report_ttl                        = '14d',
-  Boolean                        $restart_puppet                    = true,
+  #Boolean                        $restart_puppet                    = $puppetdb::params::restart_puppet,
   Stdlib::Absolutepath           $ssl_ca_cert_path                  = $puppetdb::params::ssl_ca_cert_path,
   Optional[String]               $ssl_ca_cert                       = undef,
   Stdlib::Absolutepath           $ssl_cert_path                     = $puppetdb::params::ssl_cert_path,
@@ -483,10 +441,10 @@ class puppetdb (
   Optional[Enum['TLSv1.2','TLSv1.3']]  $ssl_protocols               = undef,
   Boolean                        $ssl_set_cert_paths                = false,
   Optional[String]               $store_usage                       = undef,
-  Boolean                        $strict_validation                 = true,
+  #Boolean                        $strict_validation                 = $puppetdb::params::strict_validation,,
   Optional[String]               $temp_usage                        = undef,
   String                         $terminus_package                  = $puppetdb::params::terminus_package,
-  String                         $test_url                          = '/v3/version',
+  String                         $test_url                          = $puppetdb::params::test_url,
   Stdlib::Absolutepath           $vardir                            = $puppetdb::params::vardir,
 ) inherits puppetdb::params {
   #

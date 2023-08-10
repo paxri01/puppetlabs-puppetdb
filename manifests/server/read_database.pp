@@ -16,7 +16,7 @@ class puppetdb::server::read_database (
   String                 $puppetdb_group          = $puppetdb::puppetdb_group,
   String                 $puppetdb_user           = $puppetdb::puppetdb_user,
   String                 $read_database           = $puppetdb::read_database,
-  Stdlib::Host           $read_database_host      = $puppetdb::read_database_host,
+  Optional[Stdlib::Host] $read_database_host      = $puppetdb::read_database_host,
   String                 $read_database_name      = $puppetdb::read_database_name,
   String                 $read_database_password  = $puppetdb::read_database_password,
   Stdlib::Port           $read_database_port      = $puppetdb::read_database_port,

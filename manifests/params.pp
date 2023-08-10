@@ -133,4 +133,19 @@ class puppetdb::params inherits puppetdb::globals {
   } else {
     $database_max_pool_size_setting_name = undef
   }
+
+  # Params for puppetdb::master::config (These should be moved)
+  #$create_service_resource     = true
+  #$enable_reports              = false
+  #$enable_storeconfigs         = true
+  #$manage_config               = true
+  #$manage_report_processor     = false
+  #$manage_routes               = true
+  #$manage_storeconfigs         = true
+  #$masterless                  = false
+  #$puppetdb_server             = fact('networking.fqdn')
+  #$puppetdb_soft_write_failure = false
+  #$puppetdb_startup_timeout    = 120
+  #$restart_puppet              = false
+  #$strict_validation           = true
 }

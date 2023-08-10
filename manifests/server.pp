@@ -59,7 +59,7 @@ class puppetdb::server (
   String                         $puppetdb_service           = $puppetdb::puppetdb_service,
   String                         $puppetdb_service_status    = $puppetdb::puppetdb_service_status,
   String                         $puppetdb_user              = $puppetdb::puppetdb_user,
-  Stdlib::Host                   $read_database_host         = $puppetdb::read_database_host,
+  Optional[Stdlib::Host]         $read_database_host         = $puppetdb::read_database_host,
   String                         $read_database_name         = $puppetdb::read_database_name,
   Stdlib::Port                   $read_database_port         = $puppetdb::read_database_port,
   String                         $read_database              = $puppetdb::read_database,
