@@ -20,15 +20,21 @@ class puppetdb::params inherits puppetdb::globals {
   $manage_database           = true
 
   if fact('os.family') =~ /RedHat|Debian/ {
-    $manage_pg_repo            = true
+    $manage_pg_repo = true
   } else {
-    $manage_pg_repo            = false
+    $manage_pg_repo = false
+  }
+
+  if fact('os.family') == 'RedHat' and versioncmp(fact('os.release.major'), '8') >= 0 {
+    $manage_dnf_module = true
+  } else {
+    $manage_dnf_module = false
   }
 
   if $puppetdb_version in ['latest','present'] or versioncmp($puppetdb_version, '7.0.0') >= 0 {
-    $postgres_version          = '11'
+    $postgres_version = '11'
   } else {
-    $postgres_version          = '9.6'
+    $postgres_version = '9.6'
   }
 
   # The remaining database settings are not used for an embedded database
@@ -208,7 +214,7 @@ class puppetdb::params inherits puppetdb::globals {
 
   $certificate_whitelist_file = "${etcdir}/certificate-whitelist"
   # the default is free access for now
-  $certificate_whitelist      = [ ]
+  $certificate_whitelist      = []
   # change to this to only allow access by the puppet master by default:
   #$certificate_whitelist      = [ $::servername ]
 
